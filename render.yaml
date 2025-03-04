@@ -3,9 +3,7 @@ services:
     name: savannah-elimu-connect
     runtime: python
     plan: free
-    buildCommand: |
-      pip install -r requirements.txt
-      cp -r messaging_app/* .
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn wsgi:app
     rootDir: messaging_app
     envVars:
