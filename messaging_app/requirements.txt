@@ -1,3 +1,4 @@
+# Core Flask Dependencies
 Flask==2.3.3
 Flask-SQLAlchemy==3.1.1
 Flask-Login==0.6.3
@@ -5,53 +6,41 @@ Flask-WTF==1.2.1
 Flask-Mail==0.9.1
 Flask-Migrate==4.0.5
 Flask-Babel==3.1.0
-gunicorn==21.2.0
-psycopg2-binary==2.9.7
-requests==2.31.0
-python-dotenv==1.0.0
+Flask-SocketIO==5.3.6
 Werkzeug==3.0.1
+
+# Database and ORM
+psycopg2-binary==2.9.7
+alembic==1.13.1
+
+# Web Server
+gunicorn==21.2.0
+
+# Utilities
+python-dotenv==1.0.0
 email-validator==2.1.0.post1
-newsapi-python==0.2.7
 python-dateutil==2.8.2
 pytz==2023.3
+requests==2.31.0
+
+# Security
 bcrypt==4.0.1
 cryptography==41.0.3
+
+# Image Processing
 Pillow==10.0.0
+
+# Caching and Task Queue
 redis==5.0.0
 celery==5.3.4
-Flask-SocketIO==5.3.6
+
+# WebSocket and Real-time
 python-socketio==5.9.0
 python-engineio==4.7.1
 eventlet==0.33.3
+
+# Location Services
 geopy==2.3.0
-alembic==1.13.1
 
-# Flask-Login
-Flask-Login==0.6.3
-
-# Flask-WTF
-Flask-WTF==1.2.1
-
-# Flask-Mail
-Flask-Mail==0.9.1
-
-# Flask-Migrate
-Flask-Migrate==4.0.5
-
-# Flask-Babel
-Flask-Babel==3.1.0
-
-# Flask-WTF
-Flask-WTF==1.2.1
-
-# Werkzeug
-Werkzeug==3.0.1
-
-# Email Validator
-email-validator==2.1.0.post1
-
-# Flask-Babel
-Flask-Babel==3.1.0
-
-# News API
+# News API Integration
 newsapi-python==0.2.7
