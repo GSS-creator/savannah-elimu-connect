@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{% block title %}{% endblock %} - Savannah Elimu Connect</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <header class="main-header">
+                <div class="logo-container">
+                    <a href="{{ url_for('index') if not current_user.is_authenticated else url_for('home') }}" class="logo-link">
+                        <img src="{{ url_for('static', filename='app-logo.svg') }}" alt="Savannah Elimu Connect" class="app-logo">
+                    </a>
+                </div>
+            </header>
+        </div>
+        <div class="nav-links">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}"><i class="fas fa-columns"></i> Dashboard</a>
+                <a href="{{ url_for('chat') }}"><i class="fas fa-comments"></i> Chat</a>
+                <a href="{{ url_for('ai_chat') }}"><i class="fas fa-robot"></i> AI Chat</a>
+                <a href="{{ url_for('marketplace') }}"><i class="fas fa-store"></i> Marketplace</a>
+                <a href="{{ url_for('resources') }}"><i class="fas fa-book"></i> Resources</a>
+                <a href="{{ url_for('profile', username=current_user.username) }}"><i class="fas fa-user"></i> Profile</a>
+                <a href="{{ url_for('settings') }}"><i class="fas fa-cog"></i> Settings</a>
+                <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="{{ url_for('register') }}"><i class="fas fa-user-plus"></i> Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="main-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block scripts %}{% endblock %}
+
+    <style>
+    .navbar {
+        background-color: #2c3e50;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .nav-brand {
+        display: flex;
+        align-items: center;
+    }
+
+    .logo-link {
+        text-decoration: none;
+    }
+
+    .app-logo {
+        height: 40px;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+    }
+
+    .nav-links a {
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+        background-color: #34495e;
+    }
+
+    .flash-messages {
+        max-width: 800px;
+        margin: 1rem auto;
+    }
+
+    .flash-message {
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .flash-success {
+        background-color: #2ecc71;
+        color: white;
+    }
+
+    .flash-error {
+        background-color: #e74c3c;
+        color: white;
+    }
+
+    .flash-info {
+        background-color: #3498db;
+        color: white;
+    }
+
+    .main-container {
+        min-height: calc(100vh - 80px);
+        background-color: #f5f6fa;
+    }
+    </style>
+</body>
+</html>

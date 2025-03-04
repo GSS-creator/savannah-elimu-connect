@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="content-grid">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="profile-card">
+                {% if current_user.is_authenticated %}
+                    <div class="profile-info">
+                        <h3>{{ current_user.username }}</h3>
+                        <p>{{ current_user.location or 'No location set' }}</p>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="quick-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="{{ url_for('edit_profile') }}">Edit Profile</a></li>
+                    <li><a href="#friends">My Friends</a></li>
+                    <li><a href="#groups">My Groups</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h1>Community Chat</h1>
+                </div>
+                <div class="messages" id="messages"></div>
+                <div class="input-area">
+                    <div class="message-input-container">
+                        <input type="text" id="message" placeholder="Type a message..." class="message-input">
+                        <button onclick="sendMessage()" class="send-button">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Posts Section -->
+            <div class="posts-section">
+                <h2>Recent Posts</h2>
+                {% for post in posts %}
+                <div class="post-card">
+                    <div class="post-header">
+                        <a href="{{ url_for('profile', username=post.author.username) }}" class="post-author">
+                            {{ post.author.username }}
+                        </a>
+                        <span class="post-time">{{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                    </div>
+                    <div class="post-content">
+                        {{ post.content }}
+                    </div>
+                    <div class="post-actions">
+                        <button class="like-button">Like</button>
+                        <button class="comment-button">Comment</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="sidebar right-sidebar">
+            <div class="groups-widget">
+                <h3>Your Groups</h3>
+                {% if current_user.is_authenticated %}
+                    {% for group in current_user.groups %}
+                    <div class="group-item">
+                        <a href="{{ url_for('group', group_id=group.id) }}">{{ group.name }}</a>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                <a href="{{ url_for('create_group') }}" class="create-group-btn">Create New Group</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}

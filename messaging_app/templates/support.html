@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Support - Savannah Elimu Connect{% endblock %}
+
+{% block content %}
+<div class="support-container">
+    <!-- Hero Section -->
+    <div class="support-hero">
+        <h1>How Can We Help?</h1>
+        <p>We're here to assist you with any questions or concerns</p>
+    </div>
+
+    <div class="support-content">
+        <!-- Quick Help Section -->
+        <section class="quick-help">
+            <h2>Common Questions</h2>
+            <div class="faq-grid">
+                <div class="faq-card">
+                    <h3>Getting Started</h3>
+                    <ul>
+                        <li><a href="#" class="faq-link">How to create an account</a></li>
+                        <li><a href="#" class="faq-link">Setting up your profile</a></li>
+                        <li><a href="#" class="faq-link">Navigation guide</a></li>
+                    </ul>
+                </div>
+                <div class="faq-card">
+                    <h3>Marketplace</h3>
+                    <ul>
+                        <li><a href="#" class="faq-link">How to list products</a></li>
+                        <li><a href="#" class="faq-link">Making a purchase</a></li>
+                        <li><a href="#" class="faq-link">Payment methods</a></li>
+                    </ul>
+                </div>
+                <div class="faq-card">
+                    <h3>Events</h3>
+                    <ul>
+                        <li><a href="#" class="faq-link">Creating an event</a></li>
+                        <li><a href="#" class="faq-link">Ticket management</a></li>
+                        <li><a href="#" class="faq-link">Event guidelines</a></li>
+                    </ul>
+                </div>
+                <div class="faq-card">
+                    <h3>Courses</h3>
+                    <ul>
+                        <li><a href="#" class="faq-link">Enrolling in courses</a></li>
+                        <li><a href="#" class="faq-link">Course completion</a></li>
+                        <li><a href="#" class="faq-link">Certificates</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Form Section -->
+        <section class="contact-form-section">
+            <div class="contact-options">
+                <div class="contact-card">
+                    <i class="fas fa-envelope"></i>
+                    <h3>Email Support</h3>
+                    <p>Send us your questions or concerns</p>
+                    <a href="mailto:s.connect77@yahoo.com">s.connect77@yahoo.com</a>
+                </div>
+                <div class="contact-card">
+                    <i class="fab fa-whatsapp"></i>
+                    <h3>WhatsApp Support</h3>
+                    <p>Chat with us on WhatsApp</p>
+                    <a href="https://wa.me/256755274944" target="_blank" class="whatsapp-link">
+                        <i class="fab fa-whatsapp"></i> +256 755 274944
+                    </a>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-comments"></i>
+                    <h3>Live Chat</h3>
+                    <p>Chat with our support team</p>
+                    <button class="btn btn-primary" onclick="openLiveChat()">Start Chat</button>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-book"></i>
+                    <h3>Knowledge Base</h3>
+                    <p>Browse our help articles</p>
+                    <a href="#" class="btn btn-outline-primary">View Articles</a>
+                </div>
+            </div>
+
+            <div class="contact-form-container">
+                <h2>Send Us a Message</h2>
+                <form method="POST" class="contact-form">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ form.name.label }}
+                            {{ form.name(class="form-control", placeholder="Your name") }}
+                            {% for error in form.name.errors %}
+                            <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.email.label }}
+                            {{ form.email(class="form-control", placeholder="Your email") }}
+                            {% for error in form.email.errors %}
+                            <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.subject.label }}
+                        {{ form.subject(class="form-control", placeholder="What's your message about?") }}
+                        {% for error in form.subject.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.category.label }}
+                        {{ form.category(class="form-control") }}
+                        {% for error in form.category.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.message.label }}
+                        {{ form.message(class="form-control", rows=5, placeholder="Tell us more about your question or concern...") }}
+                        {% for error in form.message.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-actions">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Support Status -->
+        {% if current_user.is_authenticated %}
+        <section class="support-status">
+            <h2>Your Support Tickets</h2>
+            <div class="tickets-list">
+                {% for ticket in tickets %}
+                <div class="ticket-card">
+                    <div class="ticket-header">
+                        <span class="ticket-id">#{{ ticket.id }}</span>
+                        <span class="ticket-status {{ ticket.status }}">{{ ticket.status|replace('_', ' ')|title }}</span>
+                    </div>
+                    <h3>{{ ticket.subject }}</h3>
+                    <div class="ticket-meta">
+                        <span><i class="fas fa-calendar"></i> {{ ticket.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                        <span><i class="fas fa-tag"></i> {{ ticket.category|title }}</span>
+                    </div>
+                    <p>{{ ticket.message[:100] }}...</p>
+                    <a href="{{ url_for('view_ticket', ticket_id=ticket.id) }}" class="btn btn-outline-primary">View Details</a>
+                </div>
+                {% else %}
+                <p class="no-tickets">You haven't submitted any support tickets yet.</p>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openLiveChat() {
+    // Initialize live chat widget
+    alert('Live chat coming soon!');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const faqLinks = document.querySelectorAll('.faq-link');
+    
+    faqLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Implement FAQ article view
+            alert('FAQ article coming soon!');
+        });
+    });
+});
+</script>
+{% endblock %}

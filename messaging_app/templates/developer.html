@@ -1,0 +1,423 @@
+{% extends "base.html" %}
+
+{% block title %}About the Developer - Savannah Elimu Connect{% endblock %}
+
+{% block content %}
+<div class="developer-container">
+    <!-- Developer Profile Section -->
+    <section class="developer-profile">
+        <div class="profile-header">
+            <div class="profile-image">
+                <img src="{{ url_for('static', filename='images/developer.jpg') }}" alt="Muhangi Gaston">
+            </div>
+            <div class="profile-info">
+                <h1>Muhangi Gaston</h1>
+                <p class="title">Lead Developer & Founder</p>
+                <div class="nationality">
+                    <img src="{{ url_for('static', filename='images/uganda-flag.png') }}" alt="Uganda Flag">
+                    <span>Uganda</span>
+                </div>
+                <div class="developer-interests">
+                    <span class="interest-tag"><i class="fas fa-code"></i> Full Stack Development</span>
+                    <span class="interest-tag"><i class="fas fa-robot"></i> AI & Machine Learning</span>
+                    <span class="interest-tag"><i class="fas fa-graduation-cap"></i> Education Technology</span>
+                    <span class="interest-tag"><i class="fas fa-globe-africa"></i> African Innovation</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-content">
+            <div class="main-content">
+                <!-- About Section -->
+                <section class="about-section">
+                    <h2>About Me</h2>
+                    <p>I am a passionate software developer from Uganda with a vision to transform education and technology access across Africa. Through Savannah Elimu Connect, I aim to create a platform that bridges educational gaps and fosters community collaboration.</p>
+                    <p>With expertise in full-stack development, AI, and machine learning, I work to build innovative solutions that address real challenges faced by African communities.</p>
+                </section>
+
+                <!-- Vision Section -->
+                <section class="vision-section">
+                    <h2>Vision & Mission</h2>
+                    <p>My vision is to create a comprehensive platform that:</p>
+                    <ul>
+                        <li>Provides accessible education to all African communities</li>
+                        <li>Facilitates knowledge sharing and cultural exchange</li>
+                        <li>Empowers local businesses through technology</li>
+                        <li>Promotes African innovation and technological advancement</li>
+                    </ul>
+                </section>
+
+                <!-- Skills Section -->
+                <section class="skills-section">
+                    <h2>Technical Skills</h2>
+                    <div class="skills-grid">
+                        <div class="skill-category">
+                            <h3>Frontend Development</h3>
+                            <div class="skill-tags">
+                                <span>HTML5</span>
+                                <span>CSS3</span>
+                                <span>JavaScript</span>
+                                <span>React</span>
+                                <span>Vue.js</span>
+                            </div>
+                        </div>
+                        <div class="skill-category">
+                            <h3>Backend Development</h3>
+                            <div class="skill-tags">
+                                <span>Python</span>
+                                <span>Flask</span>
+                                <span>Django</span>
+                                <span>Node.js</span>
+                                <span>SQL</span>
+                            </div>
+                        </div>
+                        <div class="skill-category">
+                            <h3>AI & Machine Learning</h3>
+                            <div class="skill-tags">
+                                <span>TensorFlow</span>
+                                <span>PyTorch</span>
+                                <span>Natural Language Processing</span>
+                                <span>Computer Vision</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="sidebar">
+                <!-- Contact Information -->
+                <div class="contact-info">
+                    <h3>Contact Information</h3>
+                    <ul>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:support@savannahelimu.com">support@savannahelimu.com</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone"></i>
+                            <span>+256 755 274 944</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Kampala, Uganda</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Social Links -->
+                <div class="social-links">
+                    <h3>Connect With Me</h3>
+                    <div class="social-grid">
+                        <a href="{{ developer.social_links.linkedin }}" class="social-link linkedin" target="_blank">
+                            <i class="fab fa-linkedin"></i>
+                            <span>LinkedIn</span>
+                        </a>
+                        <a href="{{ developer.social_links.github }}" class="social-link github" target="_blank">
+                            <i class="fab fa-github"></i>
+                            <span>GitHub</span>
+                        </a>
+                        <a href="{{ developer.social_links.twitter }}" class="social-link twitter" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                            <span>Twitter</span>
+                        </a>
+                        <a href="https://www.facebook.com/muhangi.gaston.35" class="social-link facebook" target="_blank">
+                            <i class="fab fa-facebook"></i>
+                            <span>Facebook</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Support Section -->
+                <div class="support-section">
+                    <h3>Support the Project</h3>
+                    <p>Help us make education more accessible across Africa.</p>
+                    <a href="tel:+256755274944" class="donate-btn">
+                        <i class="fas fa-heart"></i>
+                        Donate: +256 755 274 944
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+.developer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.developer-profile {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 40px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.profile-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 4px solid white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-info h1 {
+    font-size: 2.5em;
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+}
+
+.title {
+    font-size: 1.2em;
+    color: #1565C0;
+    margin: 0 0 15px 0;
+}
+
+.nationality {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.nationality img {
+    width: 24px;
+    height: 16px;
+    border-radius: 2px;
+}
+
+.developer-interests {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.interest-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    background: rgba(21, 101, 192, 0.1);
+    color: #1565C0;
+    border-radius: 20px;
+    font-size: 0.9em;
+}
+
+.profile-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    padding: 40px;
+}
+
+.main-content section {
+    margin-bottom: 40px;
+}
+
+.main-content h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+}
+
+.main-content p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.vision-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.vision-section li {
+    padding: 10px 0;
+    padding-left: 25px;
+    position: relative;
+    color: #666;
+}
+
+.vision-section li::before {
+    content: '•';
+    color: #1565C0;
+    position: absolute;
+    left: 0;
+    font-size: 1.5em;
+    line-height: 1;
+}
+
+.skills-grid {
+    display: grid;
+    gap: 20px;
+}
+
+.skill-category h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+.skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.skill-tags span {
+    padding: 5px 12px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.sidebar > div {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.sidebar h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.3em;
+}
+
+.contact-info ul {
+    list-style: none;
+    padding: 0;
+}
+
+.contact-info li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    color: #666;
+}
+
+.contact-info i {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 50%;
+    color: #1565C0;
+}
+
+.contact-info a {
+    color: #1565C0;
+    text-decoration: none;
+}
+
+.contact-info a:hover {
+    text-decoration: underline;
+}
+
+.social-grid {
+    display: grid;
+    gap: 15px;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    transition: transform 0.2s;
+}
+
+.social-link:hover {
+    transform: translateY(-2px);
+}
+
+.social-link.linkedin {
+    background: #0077b5;
+}
+
+.social-link.github {
+    background: #333;
+}
+
+.social-link.twitter {
+    background: #1da1f2;
+}
+
+.social-link.facebook {
+    background: #3b5998;
+}
+
+.support-section {
+    text-align: center;
+}
+
+.support-section p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.donate-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #1565C0;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.donate-btn:hover {
+    background: #0D47A1;
+}
+
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+
+    .developer-interests {
+        justify-content: center;
+    }
+
+    .profile-content {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-image {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+    }
+}
+</style>
+{% endblock %} 

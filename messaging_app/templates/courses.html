@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block title %}Courses - Learn African History, Culture & Languages{% endblock %}
+
+{% block content %}
+<div class="courses-container">
+    <!-- Hero Section -->
+    <div class="courses-hero">
+        <h1>Discover African Heritage</h1>
+        <p>Learn about African history, culture, and languages from expert instructors</p>
+        <div class="search-bar">
+            <input type="text" id="courseSearch" placeholder="Search courses...">
+            <button type="button" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="courses-filters">
+        <div class="filter-group">
+            <label>Category</label>
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="history">History</option>
+                <option value="culture">Culture</option>
+                <option value="language">Language</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Level</label>
+            <select id="levelFilter">
+                <option value="">All Levels</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Language</label>
+            <select id="languageFilter">
+                <option value="">All Languages</option>
+                <option value="english">English</option>
+                <option value="swahili">Swahili</option>
+                <option value="yoruba">Yoruba</option>
+                <option value="zulu">Zulu</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Price</label>
+            <select id="priceFilter">
+                <option value="">All Prices</option>
+                <option value="free">Free</option>
+                <option value="paid">Paid</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Featured Courses -->
+    <section class="featured-courses">
+        <h2>Featured Courses</h2>
+        <div class="courses-grid">
+            {% for course in featured_courses %}
+            <div class="course-card">
+                <div class="course-thumbnail">
+                    <img src="{{ course.thumbnail or url_for('static', filename='default_course.jpg') }}" 
+                         alt="{{ course.title }}">
+                    {% if course.price == 0 %}
+                    <span class="course-badge free">Free</span>
+                    {% endif %}
+                </div>
+                <div class="course-content">
+                    <div class="course-category">{{ course.category }}</div>
+                    <h3>{{ course.title }}</h3>
+                    <p>{{ course.description[:100] }}...</p>
+                    <div class="course-meta">
+                        <div class="instructor">
+                            <img src="{{ course.instructor.profile_picture or url_for('static', filename='default_profile.png') }}" 
+                                 alt="{{ course.instructor.first_name }}">
+                            <span>{{ course.instructor.first_name }} {{ course.instructor.last_name }}</span>
+                        </div>
+                        <div class="course-stats">
+                            <span class="rating">
+                                <i class="fas fa-star"></i> {{ "%.1f"|format(course.get_rating()) }}
+                            </span>
+                            <span class="students">
+                                <i class="fas fa-users"></i> {{ course.enrollments|length }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="course-footer">
+                        <div class="course-info">
+                            <span><i class="fas fa-clock"></i> {{ course.duration // 60 }}h {{ course.duration % 60 }}m</span>
+                            <span><i class="fas fa-signal"></i> {{ course.level }}</span>
+                        </div>
+                        <div class="course-price">
+                            {% if course.price == 0 %}
+                            <span>Free</span>
+                            {% else %}
+                            <span>${{ "%.2f"|format(course.price) }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('view_course', course_id=course.id) }}" class="course-link"></a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- All Courses -->
+    <section class="all-courses">
+        <h2>All Courses</h2>
+        <div class="courses-grid" id="coursesGrid">
+            {% for course in courses %}
+            <div class="course-card">
+                <div class="course-thumbnail">
+                    <img src="{{ course.thumbnail or url_for('static', filename='default_course.jpg') }}" 
+                         alt="{{ course.title }}">
+                    {% if course.price == 0 %}
+                    <span class="course-badge free">Free</span>
+                    {% endif %}
+                </div>
+                <div class="course-content">
+                    <div class="course-category">{{ course.category }}</div>
+                    <h3>{{ course.title }}</h3>
+                    <p>{{ course.description[:100] }}...</p>
+                    <div class="course-meta">
+                        <div class="instructor">
+                            <img src="{{ course.instructor.profile_picture or url_for('static', filename='default_profile.png') }}" 
+                                 alt="{{ course.instructor.first_name }}">
+                            <span>{{ course.instructor.first_name }} {{ course.instructor.last_name }}</span>
+                        </div>
+                        <div class="course-stats">
+                            <span class="rating">
+                                <i class="fas fa-star"></i> {{ "%.1f"|format(course.get_rating()) }}
+                            </span>
+                            <span class="students">
+                                <i class="fas fa-users"></i> {{ course.enrollments|length }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="course-footer">
+                        <div class="course-info">
+                            <span><i class="fas fa-clock"></i> {{ course.duration // 60 }}h {{ course.duration % 60 }}m</span>
+                            <span><i class="fas fa-signal"></i> {{ course.level }}</span>
+                        </div>
+                        <div class="course-price">
+                            {% if course.price == 0 %}
+                            <span>Free</span>
+                            {% else %}
+                            <span>${{ "%.2f"|format(course.price) }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('view_course', course_id=course.id) }}" class="course-link"></a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if pages > 1 %}
+        <div class="pagination">
+            {% if page > 1 %}
+            <a href="{{ url_for('courses', page=page-1) }}" class="btn btn-outline-primary">&laquo; Previous</a>
+            {% endif %}
+            
+            {% for p in range(1, pages + 1) %}
+            <a href="{{ url_for('courses', page=p) }}" 
+               class="btn {% if p == page %}btn-primary{% else %}btn-outline-primary{% endif %}">{{ p }}</a>
+            {% endfor %}
+            
+            {% if page < pages %}
+            <a href="{{ url_for('courses', page=page+1) }}" class="btn btn-outline-primary">Next &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Become an Instructor -->
+    <section class="become-instructor">
+        <div class="instructor-content">
+            <h2>Share Your Knowledge</h2>
+            <p>Join our community of instructors and help preserve and share African heritage</p>
+            <a href="{{ url_for('become_instructor') }}" class="btn btn-primary">Become an Instructor</a>
+        </div>
+        <div class="instructor-image">
+            <img src="{{ url_for('static', filename='instructor.jpg') }}" alt="Become an instructor">
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const courseSearch = document.getElementById('courseSearch');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const levelFilter = document.getElementById('levelFilter');
+    const languageFilter = document.getElementById('languageFilter');
+    const priceFilter = document.getElementById('priceFilter');
+    const coursesGrid = document.getElementById('coursesGrid');
+
+    function filterCourses() {
+        const searchQuery = courseSearch.value.toLowerCase();
+        const category = categoryFilter.value;
+        const level = levelFilter.value;
+        const language = languageFilter.value;
+        const price = priceFilter.value;
+
+        fetch(`/api/filter-courses?search=${searchQuery}&category=${category}&level=${level}&language=${language}&price=${price}`)
+            .then(response => response.json())
+            .then(data => {
+                coursesGrid.innerHTML = data.html;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Add event listeners
+    courseSearch.addEventListener('input', debounce(filterCourses, 300));
+    categoryFilter.addEventListener('change', filterCourses);
+    levelFilter.addEventListener('change', filterCourses);
+    languageFilter.addEventListener('change', filterCourses);
+    priceFilter.addEventListener('change', filterCourses);
+
+    // Debounce function
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+});
+</script>
+{% endblock %}

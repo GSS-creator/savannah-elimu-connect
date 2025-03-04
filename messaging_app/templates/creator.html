@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h1 class="text-center mb-4">{{ creator_info.project }}</h1>
+                    
+                    <!-- Creator Information -->
+                    <div class="text-center mb-4">
+                        <div class="creator-avatar mb-3">
+                            <i class="fas fa-user-circle fa-5x text-primary"></i>
+                        </div>
+                        <h2>{{ creator_info.name }}</h2>
+                        <p class="text-muted">{{ creator_info.role }}</p>
+                        <p><i class="fas fa-map-marker-alt"></i> {{ creator_info.country }}</p>
+                    </div>
+
+                    <!-- Project Description -->
+                    <div class="mb-4">
+                        <h3 class="text-center mb-3">About the Project</h3>
+                        <p class="lead text-center">{{ creator_info.description }}</p>
+                    </div>
+
+                    <!-- Contact & Support -->
+                    <div class="row mt-5">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body text-center">
+                                    <h4><i class="fas fa-envelope"></i> Support</h4>
+                                    <p>Email: <a href="mailto:{{ creator_info.support_email }}">{{ creator_info.support_email }}</a></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body text-center">
+                                    <h4><i class="fas fa-hand-holding-heart"></i> Donate</h4>
+                                    <p>Mobile Money: {{ creator_info.donation_mobile }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="mt-5">
+                        <h3 class="text-center mb-4">Platform Features</h3>
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <div class="feature-item">
+                                    <i class="fas fa-graduation-cap fa-2x text-primary mb-2"></i>
+                                    <h5>Education</h5>
+                                    <p>Access to learning resources and courses</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-item">
+                                    <i class="fas fa-store fa-2x text-primary mb-2"></i>
+                                    <h5>Marketplace</h5>
+                                    <p>Buy and sell in the community</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-item">
+                                    <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                                    <h5>Community</h5>
+                                    <p>Connect with others and share knowledge</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.creator-avatar {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    border-radius: 50%;
+}
+
+.feature-item {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    height: 100%;
+}
+
+.card {
+    border-radius: 15px;
+    border: none;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+</style>
+{% endblock %} 

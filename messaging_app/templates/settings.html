@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="settings-container">
+    <h1 class="settings-title">Settings</h1>
+    
+    <form method="POST" action="{{ url_for('settings') }}" class="settings-form" enctype="multipart/form-data">
+        <div class="settings-section">
+            <div class="section-header">
+                <i class="fas fa-language"></i>
+                <h2>Language Preferences</h2>
+            </div>
+            <div class="language-options">
+                <select id="language-select" class="form-control" name="language">
+                    <option value="en">English</option>
+                    <optgroup label="East African Languages">
+                        <option value="sw">Swahili</option>
+                        <option value="lg">Luganda</option>
+                        <option value="rw">Kinyarwanda</option>
+                        <option value="am">Amharic</option>
+                        <option value="so">Somali</option>
+                    </optgroup>
+                    <optgroup label="West African Languages">
+                        <option value="yo">Yoruba</option>
+                        <option value="ha">Hausa</option>
+                        <option value="ig">Igbo</option>
+                        <option value="wo">Wolof</option>
+                        <option value="tw">Twi</option>
+                    </optgroup>
+                    <optgroup label="Southern African Languages">
+                        <option value="zu">Zulu</option>
+                        <option value="xh">Xhosa</option>
+                        <option value="sn">Shona</option>
+                        <option value="ny">Chichewa</option>
+                        <option value="ts">Tsonga</option>
+                    </optgroup>
+                    <optgroup label="Central African Languages">
+                        <option value="ln">Lingala</option>
+                        <option value="kg">Kikongo</option>
+                        <option value="lu">Luba-Kasai</option>
+                        <option value="sg">Sango</option>
+                    </optgroup>
+                    <optgroup label="North African Languages">
+                        <option value="ar">Arabic</option>
+                        <option value="ber">Berber</option>
+                        <option value="cop">Coptic</option>
+                    </optgroup>
+                </select>
+            </div>
+            
+            <div class="form-group toggle-group">
+                <label for="auto_translate">Auto-translate Messages</label>
+                <label class="switch">
+                    <input type="checkbox" id="auto_translate" name="auto_translate" {% if current_user.auto_translate %}checked{% endif %}>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <div class="section-header">
+                <i class="fas fa-user-circle"></i>
+                <h2>Profile Settings</h2>
+            </div>
+            <div class="form-group profile-picture-group">
+                <label for="profile_picture">Profile Picture</label>
+                <div class="profile-upload">
+                    <div class="profile-preview" id="profilePreview">
+                        <img src="{{ url_for('static', filename='default-avatar.png') }}" alt="Profile Preview" id="previewImage">
+                    </div>
+                    <div class="upload-controls">
+                        <label class="custom-file-upload">
+                            <input type="file" id="profile_picture" name="profile_picture" accept="image/*" onchange="previewFile()">
+                            <i class="fas fa-camera"></i> Choose Photo
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="bio">Bio</label>
+                <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself...">{{ current_user.bio }}</textarea>
+                <div class="char-count"><span id="bioCount">0</span>/200</div>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <div class="section-header">
+                <i class="fas fa-bell"></i>
+                <h2>Notification Settings</h2>
+            </div>
+            <div class="form-group toggle-group">
+                <label for="email_notifications">Email Notifications</label>
+                <label class="switch">
+                    <input type="checkbox" id="email_notifications" name="email_notifications" {% if current_user.email_notifications %}checked{% endif %}>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            
+            <div class="form-group toggle-group">
+                <label for="sound_notifications">Sound Notifications</label>
+                <label class="switch">
+                    <input type="checkbox" id="sound_notifications" name="sound_notifications" {% if current_user.sound_notifications %}checked{% endif %}>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-section submit-section">
+            <button type="submit" class="save-button">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+.settings-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.settings-title {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.settings-section {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.settings-section:hover {
+    transform: translateY(-2px);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.section-header i {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    color: #3498db;
+}
+
+.section-header h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #34495e;
+    font-weight: 500;
+}
+
+.language-options {
+    max-width: 400px;
+}
+
+select.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: var(--text-primary);
+    background-color: white;
+}
+
+select.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+optgroup {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+option {
+    padding: 0.5rem;
+    color: var(--text-primary);
+}
+
+.toggle-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #3498db;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #3498db;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.profile-picture-group {
+    text-align: center;
+}
+
+.profile-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.profile-preview {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #3498db;
+    margin: 0 auto;
+}
+
+.profile-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.custom-file-upload {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background: #3498db;
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.custom-file-upload:hover {
+    background: #2980b9;
+}
+
+.custom-file-upload input[type="file"] {
+    display: none;
+}
+
+textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 1rem;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.2s;
+}
+
+textarea:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+.char-count {
+    text-align: right;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.submit-section {
+    text-align: center;
+}
+
+.save-button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.save-button:hover {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.save-button:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .settings-container {
+        margin: 1rem;
+    }
+    
+    .settings-section {
+        padding: 1.5rem;
+    }
+    
+    .toggle-group {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+}
+</style>
+
+<script>
+function previewFile() {
+    const preview = document.getElementById('previewImage');
+    const file = document.querySelector('input[type=file]').files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = function () {
+        preview.src = reader.result;
+    }
+
+    if (file) {
+        reader.readAsDataURL(file);
+    }
+}
+
+document.getElementById('bio').addEventListener('input', function() {
+    const maxLength = 200;
+    const currentLength = this.value.length;
+    document.getElementById('bioCount').textContent = currentLength;
+    
+    if (currentLength > maxLength) {
+        this.value = this.value.substring(0, maxLength);
+    }
+});
+
+// Initialize bio counter
+document.getElementById('bioCount').textContent = document.getElementById('bio').value.length;
+</script>
+{% endblock %}

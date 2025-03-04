@@ -1,0 +1,538 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Savannah Elimu Connect{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Quick Actions Grid -->
+    <section class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="actions-grid">
+            <!-- Profile -->
+            <a href="{{ url_for('profile', username=current_user.username) }}" class="action-card">
+                <i class="fas fa-user-circle"></i>
+                <span>My Profile</span>
+            </a>
+            
+            <!-- Messages -->
+            <a href="{{ url_for('chat') }}" class="action-card">
+                <i class="fas fa-comments"></i>
+                <span>Messages</span>
+                {% if recent_messages %}
+                <span class="badge">{{ recent_messages|length }}</span>
+                {% endif %}
+            </a>
+
+            <!-- Marketplace -->
+            <a href="{{ url_for('marketplace') }}" class="action-card">
+                <i class="fas fa-store"></i>
+                <span>Marketplace</span>
+            </a>
+
+            <!-- Groups -->
+            <a href="{{ url_for('create_group') }}" class="action-card">
+                <i class="fas fa-users"></i>
+                <span>Groups</span>
+            </a>
+
+            <!-- News -->
+            <a href="{{ url_for('news', category='all') }}" class="action-card">
+                <i class="fas fa-newspaper"></i>
+                <span>News</span>
+            </a>
+
+            <!-- Politics -->
+            <a href="{{ url_for('politics') }}" class="action-card">
+                <i class="fas fa-landmark"></i>
+                <span>Politics</span>
+            </a>
+
+            <!-- Resources -->
+            <a href="{{ url_for('resources') }}" class="action-card">
+                <i class="fas fa-book"></i>
+                <span>Resources</span>
+            </a>
+
+            <!-- AI Chat -->
+            <a href="{{ url_for('ai_chat') }}" class="action-card">
+                <i class="fas fa-robot"></i>
+                <span>AI Assistant</span>
+            </a>
+
+            <!-- Settings -->
+            <a href="{{ url_for('settings') }}" class="action-card">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+
+            <!-- Create Listing -->
+            <a href="{{ url_for('create_listing') }}" class="action-card">
+                <i class="fas fa-plus-circle"></i>
+                <span>Create Listing</span>
+            </a>
+
+            <!-- Developer -->
+            <a href="{{ url_for('developer') }}" class="action-card">
+                <i class="fas fa-code"></i>
+                <span>About Developer</span>
+            </a>
+
+            <!-- Support -->
+            <a href="#" class="action-card">
+                <i class="fas fa-headset"></i>
+                <span>Support</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- GSS-Tec Assistant -->
+    <section class="gss-tec-assistant">
+        <h2><i class="fas fa-search"></i> GSS-Tec Assistant</h2>
+        <div class="search-container">
+            <form id="searchForm" class="search-form">
+                <div class="search-input-group">
+                    <input type="text" id="searchQuery" placeholder="Search anything..." required>
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+            <div id="searchResults" class="search-results">
+                <!-- Results will be displayed here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Chat Assistant -->
+    <section class="ai-chat-assistant">
+        <h2><i class="fas fa-robot"></i> AI Chat Assistant</h2>
+        <div class="chat-container">
+            <div id="chatMessages" class="chat-messages">
+                {% for message in messages %}
+                <div class="chat-message {{ 'ai' if message.is_ai else 'user' }}">
+                    <div class="message-content">
+                        {{ message.content }}
+                    </div>
+                    <div class="message-time">
+                        {{ message.created_at.strftime('%H:%M') }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <form id="chatForm" class="chat-form">
+                <div class="chat-input-group">
+                    <input type="text" id="chatInput" placeholder="Type your message..." required>
+                    <button type="submit" class="chat-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Activity Feed -->
+    <section class="activity-feed">
+        <h2>Recent Activity</h2>
+        
+        <!-- Recent Messages -->
+        {% if recent_messages %}
+        <div class="activity-section">
+            <h3><i class="fas fa-envelope"></i> Recent Messages</h3>
+            <div class="activity-list">
+                {% for message in recent_messages %}
+                <div class="activity-item">
+                    <span class="activity-icon"><i class="fas fa-comment"></i></span>
+                    <div class="activity-content">
+                        <p>{{ message.content[:100] }}...</p>
+                        <small>{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Recent Orders -->
+        {% if recent_orders %}
+        <div class="activity-section">
+            <h3><i class="fas fa-shopping-cart"></i> Recent Orders</h3>
+            <div class="activity-list">
+                {% for order in recent_orders %}
+                <div class="activity-item">
+                    <span class="activity-icon"><i class="fas fa-box"></i></span>
+                    <div class="activity-content">
+                        <p>Order #{{ order.id }} - {{ order.status }}</p>
+                        <small>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+<style>
+.dashboard-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.quick-actions {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.action-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.action-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background: #e9ecef;
+}
+
+.action-card i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #3498db;
+}
+
+.action-card span {
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.8rem;
+    min-width: 20px;
+    text-align: center;
+}
+
+.gss-tec-assistant {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.search-container {
+    margin-top: 1rem;
+}
+
+.search-form {
+    display: flex;
+    gap: 1rem;
+}
+
+.search-input-group {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.search-input-group input {
+    flex: 1;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.search-button {
+    padding: 0.8rem 1.5rem;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.search-button:hover {
+    background: #2980b9;
+}
+
+.search-results {
+    margin-top: 1rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.ai-chat-assistant {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.chat-container {
+    margin-top: 1rem;
+}
+
+.chat-messages {
+    height: 300px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+.chat-message {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-message.user {
+    align-items: flex-end;
+}
+
+.chat-message.ai {
+    align-items: flex-start;
+}
+
+.message-content {
+    max-width: 80%;
+    padding: 0.8rem;
+    border-radius: 10px;
+    background: #e9ecef;
+}
+
+.chat-message.user .message-content {
+    background: #3498db;
+    color: white;
+}
+
+.message-time {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 0.3rem;
+}
+
+.chat-form {
+    display: flex;
+    gap: 1rem;
+}
+
+.chat-input-group {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.chat-input-group input {
+    flex: 1;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.chat-button {
+    padding: 0.8rem 1.5rem;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.chat-button:hover {
+    background: #2980b9;
+}
+
+.activity-feed {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.activity-section {
+    margin-bottom: 2rem;
+}
+
+.activity-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.activity-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.activity-item:hover {
+    transform: translateX(5px);
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #3498db;
+    color: white;
+    border-radius: 50%;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-content p {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.activity-content small {
+    color: #6c757d;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchForm = document.getElementById('searchForm');
+    const searchQuery = document.getElementById('searchQuery');
+    const searchResults = document.getElementById('searchResults');
+
+    searchForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const query = searchQuery.value.trim();
+        if (!query) return;
+
+        try {
+            const response = await fetch('/ai_search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ query: query })
+            });
+
+            const data = await response.json();
+            if (data.results) {
+                searchResults.innerHTML = data.results.map(result => `
+                    <div class="search-result">
+                        <h4>${result.title}</h4>
+                        <p>${result.snippet}</p>
+                        <a href="${result.url}" target="_blank">Read more</a>
+                    </div>
+                `).join('');
+            }
+        } catch (error) {
+            console.error('Search error:', error);
+            searchResults.innerHTML = '<p>Error performing search. Please try again.</p>';
+        }
+    });
+
+    // Chat functionality
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const chatMessages = document.getElementById('chatMessages');
+
+    chatForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        // Add user message to chat
+        const userMessage = document.createElement('div');
+        userMessage.className = 'chat-message user';
+        userMessage.innerHTML = `
+            <div class="message-content">${message}</div>
+            <div class="message-time">${new Date().toLocaleTimeString()}</div>
+        `;
+        chatMessages.appendChild(userMessage);
+        chatInput.value = '';
+
+        try {
+            const response = await fetch('/api/ai/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ message: message })
+            });
+
+            const data = await response.json();
+            if (data.response) {
+                // Add AI response to chat
+                const aiMessage = document.createElement('div');
+                aiMessage.className = 'chat-message ai';
+                aiMessage.innerHTML = `
+                    <div class="message-content">${data.response}</div>
+                    <div class="message-time">${new Date().toLocaleTimeString()}</div>
+                `;
+                chatMessages.appendChild(aiMessage);
+            }
+        } catch (error) {
+            console.error('Chat error:', error);
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'chat-message ai';
+            errorMessage.innerHTML = `
+                <div class="message-content">Sorry, I encountered an error. Please try again.</div>
+                <div class="message-time">${new Date().toLocaleTimeString()}</div>
+            `;
+            chatMessages.appendChild(errorMessage);
+        }
+
+        // Scroll to bottom of chat
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+});
+</script>
+{% endblock %}

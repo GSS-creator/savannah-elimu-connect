@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="news-container">
+    <div class="news-sidebar">
+        <div class="filters">
+            <h3>Filter News</h3>
+            <div class="filter-section">
+                <h4>Categories</h4>
+                <ul>
+                    <li><a href="{{ url_for('news', category='all') }}" class="{{ 'active' if category == 'all' }}">All News</a></li>
+                    <li><a href="{{ url_for('news', category='politics') }}" class="{{ 'active' if category == 'politics' }}">Politics</a></li>
+                    <li><a href="{{ url_for('news', category='business') }}" class="{{ 'active' if category == 'business' }}">Business</a></li>
+                    <li><a href="{{ url_for('news', category='technology') }}" class="{{ 'active' if category == 'technology' }}">Technology</a></li>
+                    <li><a href="{{ url_for('news', category='health') }}" class="{{ 'active' if category == 'health' }}">Health</a></li>
+                    <li><a href="{{ url_for('news', category='education') }}" class="{{ 'active' if category == 'education' }}">Education</a></li>
+                </ul>
+            </div>
+            
+            <div class="filter-section">
+                <h4>Regions</h4>
+                <ul>
+                    <li><a href="{{ url_for('news', region='east_africa') }}" class="{{ 'active' if region == 'east_africa' }}">East Africa</a></li>
+                    <li><a href="{{ url_for('news', region='west_africa') }}" class="{{ 'active' if region == 'west_africa' }}">West Africa</a></li>
+                    <li><a href="{{ url_for('news', region='north_africa') }}" class="{{ 'active' if region == 'north_africa' }}">North Africa</a></li>
+                    <li><a href="{{ url_for('news', region='south_africa') }}" class="{{ 'active' if region == 'south_africa' }}">South Africa</a></li>
+                    <li><a href="{{ url_for('news', region='central_africa') }}" class="{{ 'active' if region == 'central_africa' }}">Central Africa</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="news-main">
+        <div class="news-header">
+            <h1>African News</h1>
+            <div class="news-actions">
+                <button class="btn btn-primary" onclick="refreshNews()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <select id="sortOrder" onchange="sortNews(this.value)">
+                    <option value="latest">Latest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="news-grid">
+            {% for article in articles %}
+            <div class="news-card">
+                {% if article.urlToImage %}
+                <div class="news-image">
+                    <img src="{{ article.urlToImage }}" alt="{{ article.title }}">
+                </div>
+                {% endif %}
+                <div class="news-content">
+                    <div class="news-meta">
+                        <span class="date">{{ article.publishedAt }}</span>
+                    </div>
+                    <h2>{{ article.title }}</h2>
+                    <p>{{ article.description }}</p>
+                    <div class="news-footer">
+                        <span class="source">{{ article.source.name }}</span>
+                        <a href="{{ article.url }}" target="_blank" class="btn btn-link">
+                            <i class="fas fa-external-link-alt"></i> Read More
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+function refreshNews() {
+    location.reload();
+}
+
+function sortNews(order) {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('sort', order);
+    window.location.href = currentUrl.toString();
+}
+
+// Auto-refresh news every 5 minutes
+setInterval(refreshNews, 300000);
+</script>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Business Profile{% endblock %}
+
+{% block content %}
+<div class="business-profile-container">
+    <div class="profile-header">
+        <div class="profile-info">
+            <div class="profile-image">
+                <img src="{{ user.profile_picture or url_for('static', filename='default_profile.png') }}" alt="Profile Picture">
+            </div>
+            <div class="profile-details">
+                <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+                <p class="job-title">{{ user.job_title }} at {{ user.company_name }}</p>
+                <p class="location">{{ user.location }}, {{ user.country }}</p>
+                {% if user != current_user %}
+                    <div class="connection-actions">
+                        {% if not current_user.is_business_connected(user) %}
+                            <form action="{{ url_for('send_connection_request', user_id=user.id) }}" method="post">
+                                {{ connection_form.hidden_tag() }}
+                                {{ connection_form.message(placeholder="Add a personal note...") }}
+                                {{ connection_form.submit(class="btn btn-primary") }}
+                            </form>
+                        {% else %}
+                            <button class="btn btn-secondary" disabled>Connected</button>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-content">
+        <div class="main-content">
+            <section class="about-section">
+                <h2>About</h2>
+                <p>{{ user.bio }}</p>
+            </section>
+
+            <section class="expertise-section">
+                <h2>Areas of Expertise</h2>
+                <p>{{ user.expertise_areas }}</p>
+            </section>
+
+            {% if user.business_type == 'investor' %}
+            <section class="investment-section">
+                <h2>Investment Interests</h2>
+                <p>{{ user.investment_interests }}</p>
+            </section>
+            {% endif %}
+
+            <section class="opportunities-section">
+                <h2>Posted Opportunities</h2>
+                {% for opportunity in user.opportunities %}
+                <div class="opportunity-card">
+                    <h3>{{ opportunity.title }}</h3>
+                    <div class="opportunity-meta">
+                        <span class="type">{{ opportunity.opportunity_type }}</span>
+                        <span class="industry">{{ opportunity.industry }}</span>
+                        <span class="location">{{ opportunity.location }}</span>
+                    </div>
+                    <p class="description">{{ opportunity.description }}</p>
+                    <div class="opportunity-footer">
+                        <span class="deadline">Deadline: {{ opportunity.deadline.strftime('%Y-%m-%d') }}</span>
+                        {% if opportunity.status == 'open' and current_user != user %}
+                            <a href="{{ url_for('apply_opportunity', opportunity_id=opportunity.id) }}" class="btn btn-primary">Apply Now</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </section>
+        </div>
+
+        <div class="sidebar">
+            <div class="connection-stats">
+                <h3>Network</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="number">{{ user.business_network.count() }}</span>
+                        <span class="label">Connections</span>
+                    </div>
+                </div>
+            </div>
+
+            {% if user == current_user %}
+            <div class="profile-actions">
+                <a href="{{ url_for('edit_business_profile') }}" class="btn btn-secondary">Edit Profile</a>
+                <a href="{{ url_for('create_opportunity') }}" class="btn btn-primary">Post Opportunity</a>
+            </div>
+            {% endif %}
+
+            <div class="business-details">
+                <h3>Business Details</h3>
+                <ul>
+                    <li>
+                        <span class="label">Industry:</span>
+                        <span class="value">{{ user.industry }}</span>
+                    </li>
+                    <li>
+                        <span class="label">Company Size:</span>
+                        <span class="value">{{ user.company_size }}</span>
+                    </li>
+                    <li>
+                        <span class="label">Type:</span>
+                        <span class="value">{{ user.business_type|title }}</span>
+                    </li>
+                </ul>
+            </div>
+
+            {% if user.linkedin_profile %}
+            <div class="social-links">
+                <a href="{{ user.linkedin_profile }}" target="_blank" class="linkedin-link">
+                    <i class="fab fa-linkedin"></i> View LinkedIn Profile
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://kit.fontawesome.com/your-kit-code.js" crossorigin="anonymous"></script>
+{% endblock %}

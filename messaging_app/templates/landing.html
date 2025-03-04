@@ -1,0 +1,651 @@
+{% extends "base.html" %}
+
+{% block title %}Savannah Elimu Connect - Africa's Complete Knowledge & Resource Hub{% endblock %}
+
+{% block content %}
+<div class="landing-page">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="hero-title">Savannah Elimu Connect</h1>
+                    <h2 class="hero-subtitle-main">Africa's Complete Knowledge & Resource Hub</h2>
+                    <p class="hero-subtitle">Connecting Africa through education, culture, commerce, and innovation</p>
+                    <div class="auth-box">
+                        <h3>Create Your Account</h3>
+                        <form method="POST" action="{{ url_for('register') }}" id="registration-form">
+                            {{ form.hidden_tag() }}
+                            <div class="form-group">
+                                {{ form.email.label(class="form-label") }}
+                                {{ form.email(class="form-control", placeholder="Enter your email") }}
+                                {% if form.email.errors %}
+                                    {% for error in form.email.errors %}
+                                        <span class="error">{{ error }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                {{ form.password.label(class="form-label") }}
+                                {{ form.password(class="form-control", placeholder="Create a password") }}
+                                {% if form.password.errors %}
+                                    {% for error in form.password.errors %}
+                                        <span class="error">{{ error }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </form>
+                        <div class="auth-footer">
+                            <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image">
+                        <i class="fas fa-graduation-cap"></i>
+                        <div class="africa-map-overlay"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Empowering African Progress</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-store"></i>
+                    <h3>Marketplace</h3>
+                    <p>Buy and sell items within your community.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>Education</h3>
+                    <p>Access educational resources and learning materials.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-users"></i>
+                    <h3>Community</h3>
+                    <p>Connect with others and join groups.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-newspaper"></i>
+                    <h3>News & Updates</h3>
+                    <p>Stay informed about local and global events.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI Assistant</h3>
+                    <p>Get help and answers from our AI assistant.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-book"></i>
+                    <h3>Resources</h3>
+                    <p>Access educational and community resources.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="about-content">
+                        <h2>About Savannah Elimu Connect</h2>
+                        <p>We are dedicated to making education accessible and connecting communities across Africa. Our platform provides a comprehensive space for learning, sharing, and growing together. Through innovative technology and community engagement, we're building bridges between learners, educators, businesses, and resources across the African continent.</p>
+                        <p class="mission-text">Our mission is to empower African communities through accessible knowledge and connections. From education to commerce, technology to governance, we're fostering collaboration and creating opportunities for knowledge exchange across all aspects of African life.</p>
+                        <div class="about-features">
+                            <div class="feature-tag">Education</div>
+                            <div class="feature-tag">Religion & Culture</div>
+                            <div class="feature-tag">Weather Updates</div>
+                            <div class="feature-tag">Political News</div>
+                            <div class="feature-tag">Trade Networks</div>
+                            <div class="feature-tag">Tech Innovation</div>
+                            <div class="feature-tag">Power Solutions</div>
+                            <div class="feature-tag">Business Hub</div>
+                            <div class="feature-tag">Community Forums</div>
+                            <div class="feature-tag">Resource Library</div>
+                            <div class="feature-tag">Market Analysis</div>
+                            <div class="feature-tag">Climate Data</div>
+                        </div>
+                        <div class="about-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">1000+</span>
+                                <span class="stat-label">Active Users</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">500+</span>
+                                <span class="stat-label">Resources</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">15+</span>
+                                <span class="stat-label">African Countries</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="about-image-grid">
+                        <i class="fas fa-graduation-cap"></i>
+                        <i class="fas fa-pray"></i>
+                        <i class="fas fa-cloud-sun"></i>
+                        <i class="fas fa-landmark"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-card">
+                <h2>Connect With Us Across Africa</h2>
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:gastonsoftwaresolutions234@gmail.com">gastonsoftwaresolutions234@gmail.com</a>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-envelope-open"></i>
+                        <a href="mailto:support@savannahelimu.com">support@savannahelimu.com</a>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+256 755 274 944</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Headquartered in Uganda, Serving All of Africa</span>
+                    </div>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/muhangi-gaston-490030261?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="social-link" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://x.com/GastonMuh5468?t=E6YnvrFs3FUMvEuKboW1gA&s=09" class="social-link" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="https://github.com/Gaston376" class="social-link" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="https://wa.me/256755274944" class="social-link" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://www.facebook.com/muhangi.gaston.35" class="social-link" target="_blank"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+/* Base Styles */
+:root {
+    --primary-color: #6366F1;
+    --primary-dark: #4F46E5;
+    --secondary-color: #3B82F6;
+    --text-primary: #374151;
+    --text-secondary: #6B7280;
+    --bg-light: #f9fafb;
+    --bg-lighter: #f3f4f6;
+    --accent-color: #10B981;
+}
+
+.landing-page {
+    overflow-x: hidden;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 6rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="rgba(255,255,255,0.1)" d="M0 0h100v100H0z"/></svg>');
+    opacity: 0.1;
+}
+
+.hero-title {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    background: linear-gradient(to right, #ffffff, #f0f0f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hero-subtitle-main {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.hero-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+}
+
+.hero-image i {
+    font-size: 15rem;
+    color: rgba(255, 255, 255, 0.2);
+}
+
+/* Features Section */
+.features-section {
+    padding: 5rem 0;
+    background: var(--bg-light);
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.feature-card {
+    background: linear-gradient(135deg, white 0%, var(--bg-lighter) 100%);
+    padding: 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    transition: all 0.3s ease;
+    height: 100%;
+    border: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+}
+
+.feature-card i {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.feature-card p {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* About Section */
+.about-section {
+    padding: 5rem 0;
+    background: white;
+}
+
+.about-content h2 {
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.about-content p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.mission-text {
+    font-style: italic;
+    border-left: 4px solid var(--primary-color);
+    padding-left: 1.5rem;
+    margin-left: 0.5rem;
+}
+
+.about-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 2rem 0;
+}
+
+.feature-tag {
+    background: linear-gradient(135deg, var(--bg-lighter) 0%, white 100%);
+    color: var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.feature-tag:hover {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.about-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin-top: 2.5rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.about-image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.about-image-grid i {
+    font-size: 5rem;
+    color: var(--primary-color);
+    opacity: 0.2;
+    transition: all 0.3s ease;
+}
+
+.about-image-grid i:hover {
+    opacity: 0.5;
+    transform: scale(1.1);
+}
+
+/* Contact Section */
+.contact-section {
+    padding: 5rem 0;
+    background: var(--bg-light);
+}
+
+.contact-card {
+    background: white;
+    padding: 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+}
+
+.contact-card h2 {
+    color: var(--text-primary);
+    margin-bottom: 2rem;
+    font-weight: 700;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-secondary);
+}
+
+.info-item i {
+    width: 40px;
+    height: 40px;
+    background: var(--bg-lighter);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+}
+
+.info-item a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.social-link {
+    width: 40px;
+    height: 40px;
+    background: var(--bg-lighter);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.social-link:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-image, .about-image-grid {
+        height: 300px;
+    }
+
+    .hero-image i, .about-image-grid i {
+        font-size: 10rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 4rem 0;
+        text-align: center;
+    }
+
+    .hero-image {
+        margin-top: 2rem;
+    }
+
+    .feature-card {
+        margin-bottom: 2rem;
+    }
+
+    .about-content {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .about-stats {
+        justify-content: center;
+    }
+
+    .about-features {
+        justify-content: center;
+    }
+    
+    .feature-tag {
+        text-align: center;
+    }
+    
+    .social-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .about-image-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .about-image-grid i {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .about-stats {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .contact-card {
+        padding: 2rem;
+    }
+}
+
+.auth-box {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+}
+
+.auth-box h3 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+    background: white;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #6366F1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 0.75rem;
+    background: #6366F1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.btn-primary:hover {
+    background: #4F46E5;
+    transform: translateY(-1px);
+}
+
+.auth-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.auth-footer p {
+    margin: 0;
+    color: #64748b;
+}
+
+.auth-footer a {
+    color: #6366F1;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+.error {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+</style>
+{% endblock %} 

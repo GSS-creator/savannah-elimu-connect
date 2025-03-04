@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block title %}Create Event{% endblock %}
+
+{% block content %}
+<div class="create-event-container">
+    <div class="create-event-header">
+        <h1>Create Your Event</h1>
+        <p>Share your cultural event with the community</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="create-event-form">
+        {{ form.hidden_tag() }}
+        
+        <!-- Basic Information -->
+        <section class="form-section">
+            <h2>Basic Information</h2>
+            
+            <div class="form-group">
+                {{ form.title.label }}
+                {{ form.title(class="form-control") }}
+                {% for error in form.title.errors %}
+                <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.description.label }}
+                {{ form.description(class="form-control", rows=5) }}
+                {% for error in form.description.errors %}
+                <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.event_type.label }}
+                    {{ form.event_type(class="form-control") }}
+                    {% for error in form.event_type.errors %}
+                    <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.category.label }}
+                    {{ form.category(class="form-control") }}
+                    {% for error in form.category.errors %}
+                    <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Date and Time -->
+        <section class="form-section">
+            <h2>Date and Time</h2>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.start_date.label }}
+                    {{ form.start_date(class="form-control") }}
+                    {% for error in form.start_date.errors %}
+                    <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.end_date.label }}
+                    {{ form.end_date(class="form-control") }}
+                    {% for error in form.end_date.errors %}
+                    <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Location -->
+        <section class="form-section">
+            <h2>Location</h2>
+            
+            <div class="form-group">
+                {{ form.venue.label }}
+                {{ form.venue(class="form-control") }}
+                {% for error in form.venue.errors %}
+                <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ form.address.label }}
+                {{ form.address(class="form-control") }}
+                {% for error in form.address.errors %}
+                <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.city.label }}
+                    {{ form.city(class="form-control") }}
+                    {% for error in form.city.errors %}
+                    <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.country.label }}
+                    {{ form.country(class="form-control") }}
+                    {% for error in form.country.errors %}
+                    <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Tickets -->
+        <section class="form-section">
+            <h2>Tickets</h2>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.max_attendees.label }}
+                    {{ form.max_attendees(class="form-control") }}
+                    {% for error in form.max_attendees.errors %}
+                    <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.price.label }}
+                    <div class="price-input">
+                        {{ form.currency(class="form-control") }}
+                        {{ form.price(class="form-control") }}
+                    </div>
+                    {% for error in form.price.errors %}
+                    <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Event Image -->
+        <section class="form-section">
+            <h2>Event Banner</h2>
+            
+            <div class="form-group">
+                <div class="image-upload-container">
+                    <div class="image-preview" id="imagePreview">
+                        <img src="{{ url_for('static', filename='default_event.jpg') }}" alt="Event banner preview">
+                    </div>
+                    <div class="upload-controls">
+                        {{ form.banner_image.label }}
+                        {{ form.banner_image(class="form-control", onchange="previewImage(this)") }}
+                        <small class="text-muted">Recommended size: 1200x600 pixels. Maximum size: 5MB</small>
+                        {% for error in form.banner_image.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Speakers -->
+        <section class="form-section">
+            <h2>Speakers/Performers</h2>
+            <div id="speakersContainer">
+                {% for speaker_form in form.speakers %}
+                <div class="speaker-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ speaker_form.name.label }}
+                            {{ speaker_form.name(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ speaker_form.role.label }}
+                            {{ speaker_form.role(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ speaker_form.bio.label }}
+                        {{ speaker_form.bio(class="form-control", rows=3) }}
+                    </div>
+                    <button type="button" class="btn btn-outline-danger remove-speaker">Remove Speaker</button>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-outline-primary" id="addSpeaker">Add Speaker</button>
+        </section>
+
+        <!-- Schedule -->
+        <section class="form-section">
+            <h2>Event Schedule</h2>
+            <div id="scheduleContainer">
+                {% for schedule_form in form.schedule_items %}
+                <div class="schedule-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ schedule_form.title.label }}
+                            {{ schedule_form.title(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ schedule_form.speaker.label }}
+                            {{ schedule_form.speaker(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            {{ schedule_form.start_time.label }}
+                            {{ schedule_form.start_time(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ schedule_form.end_time.label }}
+                            {{ schedule_form.end_time(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ schedule_form.description.label }}
+                        {{ schedule_form.description(class="form-control", rows=2) }}
+                    </div>
+                    <button type="button" class="btn btn-outline-danger remove-schedule">Remove Item</button>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-outline-primary" id="addSchedule">Add Schedule Item</button>
+        </section>
+
+        <div class="form-actions">
+            <button type="button" class="btn btn-outline-secondary" onclick="history.back()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Create Event</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Image preview
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.querySelector('#imagePreview img').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Add speaker
+    const speakersContainer = document.getElementById('speakersContainer');
+    const addSpeakerBtn = document.getElementById('addSpeaker');
+    let speakerCount = document.querySelectorAll('.speaker-form').length;
+
+    addSpeakerBtn.addEventListener('click', function() {
+        const speakerTemplate = `
+            <div class="speaker-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" name="speakers-${speakerCount}-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <input type="text" name="speakers-${speakerCount}-role" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea name="speakers-${speakerCount}-bio" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="button" class="btn btn-outline-danger remove-speaker">Remove Speaker</button>
+            </div>
+        `;
+        speakersContainer.insertAdjacentHTML('beforeend', speakerTemplate);
+        speakerCount++;
+    });
+
+    // Remove speaker
+    speakersContainer.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-speaker')) {
+            e.target.closest('.speaker-form').remove();
+        }
+    });
+
+    // Add schedule item
+    const scheduleContainer = document.getElementById('scheduleContainer');
+    const addScheduleBtn = document.getElementById('addSchedule');
+    let scheduleCount = document.querySelectorAll('.schedule-form').length;
+
+    addScheduleBtn.addEventListener('click', function() {
+        const scheduleTemplate = `
+            <div class="schedule-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" name="schedule-${scheduleCount}-title" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Speaker</label>
+                        <input type="text" name="schedule-${scheduleCount}-speaker" class="form-control">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="datetime-local" name="schedule-${scheduleCount}-start_time" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <input type="datetime-local" name="schedule-${scheduleCount}-end_time" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="schedule-${scheduleCount}-description" class="form-control" rows="2"></textarea>
+                </div>
+                <button type="button" class="btn btn-outline-danger remove-schedule">Remove Item</button>
+            </div>
+        `;
+        scheduleContainer.insertAdjacentHTML('beforeend', scheduleTemplate);
+        scheduleCount++;
+    });
+
+    // Remove schedule item
+    scheduleContainer.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-schedule')) {
+            e.target.closest('.schedule-form').remove();
+        }
+    });
+});
+</script>
+{% endblock %}

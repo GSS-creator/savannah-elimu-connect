@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="politics-container">
+    <div class="politics-sidebar">
+        <div class="filters">
+            <h3>Filter Events</h3>
+            <div class="filter-section">
+                <h4>Event Types</h4>
+                <ul>
+                    <li><a href="{{ url_for('politics', event_type='elections') }}" class="{{ 'active' if event_type == 'elections' }}">Elections</a></li>
+                    <li><a href="{{ url_for('politics', event_type='policy') }}" class="{{ 'active' if event_type == 'policy' }}">Policy Changes</a></li>
+                    <li><a href="{{ url_for('politics', event_type='diplomatic') }}" class="{{ 'active' if event_type == 'diplomatic' }}">Diplomatic Relations</a></li>
+                    <li><a href="{{ url_for('politics', event_type='parliament') }}" class="{{ 'active' if event_type == 'parliament' }}">Parliamentary Sessions</a></li>
+                </ul>
+            </div>
+            
+            <div class="filter-section">
+                <h4>Regions</h4>
+                <ul>
+                    <li><a href="{{ url_for('politics', region='east_africa') }}" class="{{ 'active' if region == 'east_africa' }}">East Africa</a></li>
+                    <li><a href="{{ url_for('politics', region='west_africa') }}" class="{{ 'active' if region == 'west_africa' }}">West Africa</a></li>
+                    <li><a href="{{ url_for('politics', region='north_africa') }}" class="{{ 'active' if region == 'north_africa' }}">North Africa</a></li>
+                    <li><a href="{{ url_for('politics', region='south_africa') }}" class="{{ 'active' if region == 'south_africa' }}">South Africa</a></li>
+                    <li><a href="{{ url_for('politics', region='central_africa') }}" class="{{ 'active' if region == 'central_africa' }}">Central Africa</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="politics-main">
+        <div class="politics-header">
+            <h1>African Politics</h1>
+            <div class="actions">
+                <a href="{{ url_for('refresh_politics') }}" class="btn btn-primary">
+                    <i class="fas fa-sync-alt"></i> Refresh News
+                </a>
+            </div>
+        </div>
+
+        <div class="politics-grid">
+            {% for event in events %}
+            <div class="event-card">
+                {% if event.image_url %}
+                <div class="event-image">
+                    <img src="{{ event.image_url }}" alt="{{ event.title }}">
+                </div>
+                {% endif %}
+                <div class="event-content">
+                    <div class="event-meta">
+                        <span class="location">{{ event.location }}</span>
+                        <span class="date">{{ event.event_date.strftime('%B %d, %Y') }}</span>
+                    </div>
+                    <h2>{{ event.title }}</h2>
+                    <p>{{ event.description }}</p>
+                    <div class="event-footer">
+                        <span class="category">{{ event.category }}</span>
+                        <a href="{{ event.source_url }}" target="_blank" class="btn btn-link">
+                            <i class="fas fa-external-link-alt"></i> Read More
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+.politics-container {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.politics-sidebar {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.filter-section {
+    margin-bottom: 2rem;
+}
+
+.filter-section h4 {
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.filter-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.filter-section li {
+    margin-bottom: 0.5rem;
+}
+
+.filter-section a {
+    color: #2c3e50;
+    text-decoration: none;
+    padding: 0.5rem;
+    display: block;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.filter-section a:hover {
+    background-color: #f0f2f5;
+}
+
+.filter-section a.active {
+    background-color: #3498db;
+    color: white;
+}
+
+.politics-main {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.politics-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.politics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.event-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+}
+
+.event-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.event-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.event-content {
+    padding: 1.5rem;
+}
+
+.event-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.event-card h2 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    color: #2c3e50;
+}
+
+.event-card p {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+}
+
+.event-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.category {
+    background: #e9ecef;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    color: #2c3e50;
+}
+
+.btn-link {
+    color: #3498db;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}
+</style>
+{% endblock %}

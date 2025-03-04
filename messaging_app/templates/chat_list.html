@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Chat{% endblock %}
+
+{% block content %}
+<div class="chat-list-container">
+    <h2>Chat with Users</h2>
+    
+    <div class="user-list">
+        {% for user in users %}
+        <a href="{{ url_for('chat', user_id=user.id) }}" class="user-card">
+            <div class="user-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="user-info">
+                <h3>{{ user.username }}</h3>
+                {% if user.last_seen %}
+                <p class="last-seen">Last seen: {{ user.last_seen.strftime('%Y-%m-%d %H:%M') }}</p>
+                {% endif %}
+            </div>
+        </a>
+        {% else %}
+        <div class="no-users">
+            <p>No other users found.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.chat-list-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.user-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.user-avatar {
+    font-size: 2.5rem;
+    color: #3498db;
+}
+
+.user-info h3 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.last-seen {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.no-users {
+    text-align: center;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    color: #7f8c8d;
+}
+</style>
+{% endblock %}

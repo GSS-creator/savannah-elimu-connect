@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}Events - Concerts, Festivals & Conferences{% endblock %}
+
+{% block content %}
+<div class="events-container">
+    <!-- Hero Section -->
+    <div class="events-hero">
+        <h1>Discover African Events</h1>
+        <p>Join concerts, festivals, conferences, and cultural celebrations across Africa</p>
+        <div class="search-bar">
+            <input type="text" id="eventSearch" placeholder="Search events...">
+            <button type="button" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="events-filters">
+        <div class="filter-group">
+            <label>Event Type</label>
+            <select id="typeFilter">
+                <option value="">All Types</option>
+                <option value="concert">Concerts</option>
+                <option value="festival">Festivals</option>
+                <option value="conference">Conferences</option>
+                <option value="workshop">Workshops</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Category</label>
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="music">Music</option>
+                <option value="culture">Culture</option>
+                <option value="education">Education</option>
+                <option value="business">Business</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Location</label>
+            <select id="locationFilter">
+                <option value="">All Locations</option>
+                {% for location in locations %}
+                <option value="{{ location }}">{{ location }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Date Range</label>
+            <select id="dateFilter">
+                <option value="">Any Time</option>
+                <option value="today">Today</option>
+                <option value="tomorrow">Tomorrow</option>
+                <option value="weekend">This Weekend</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Featured Events -->
+    <section class="featured-events">
+        <h2>Featured Events</h2>
+        <div class="events-grid">
+            {% for event in featured_events %}
+            <div class="event-card">
+                <div class="event-banner">
+                    <img src="{{ event.banner_image or url_for('static', filename='default_event.jpg') }}" 
+                         alt="{{ event.title }}">
+                    {% if event.is_full() %}
+                    <span class="event-badge sold-out">Sold Out</span>
+                    {% elif event.price == 0 %}
+                    <span class="event-badge free">Free</span>
+                    {% endif %}
+                </div>
+                <div class="event-content">
+                    <div class="event-date">
+                        <div class="date-box">
+                            <span class="month">{{ event.start_date.strftime('%b') }}</span>
+                            <span class="day">{{ event.start_date.strftime('%d') }}</span>
+                        </div>
+                        <div class="time">{{ event.start_date.strftime('%I:%M %p') }}</div>
+                    </div>
+                    <div class="event-details">
+                        <h3>{{ event.title }}</h3>
+                        <div class="event-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> {{ event.venue }}, {{ event.city }}</span>
+                            <span><i class="fas fa-tag"></i> {{ event.category }}</span>
+                        </div>
+                        <p>{{ event.description[:150] }}...</p>
+                    </div>
+                    <div class="event-footer">
+                        <div class="organizer">
+                            <img src="{{ event.organizer.profile_picture or url_for('static', filename='default_profile.png') }}" 
+                                 alt="{{ event.organizer.first_name }}">
+                            <span>By {{ event.organizer.first_name }} {{ event.organizer.last_name }}</span>
+                        </div>
+                        <div class="price">
+                            {% if event.price == 0 %}
+                            <span>Free</span>
+                            {% else %}
+                            <span>{{ event.currency }} {{ "%.2f"|format(event.price) }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('view_event', event_id=event.id) }}" class="event-link"></a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Upcoming Events -->
+    <section class="upcoming-events">
+        <div class="section-header">
+            <h2>Upcoming Events</h2>
+            <div class="view-toggle">
+                <button class="btn btn-outline-primary active" data-view="grid">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button class="btn btn-outline-primary" data-view="list">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="events-grid" id="eventsContainer">
+            {% for event in events %}
+            <div class="event-card">
+                <div class="event-banner">
+                    <img src="{{ event.banner_image or url_for('static', filename='default_event.jpg') }}" 
+                         alt="{{ event.title }}">
+                    {% if event.is_full() %}
+                    <span class="event-badge sold-out">Sold Out</span>
+                    {% elif event.price == 0 %}
+                    <span class="event-badge free">Free</span>
+                    {% endif %}
+                </div>
+                <div class="event-content">
+                    <div class="event-date">
+                        <div class="date-box">
+                            <span class="month">{{ event.start_date.strftime('%b') }}</span>
+                            <span class="day">{{ event.start_date.strftime('%d') }}</span>
+                        </div>
+                        <div class="time">{{ event.start_date.strftime('%I:%M %p') }}</div>
+                    </div>
+                    <div class="event-details">
+                        <h3>{{ event.title }}</h3>
+                        <div class="event-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> {{ event.venue }}, {{ event.city }}</span>
+                            <span><i class="fas fa-tag"></i> {{ event.category }}</span>
+                        </div>
+                        <p>{{ event.description[:150] }}...</p>
+                        {% if event.speakers %}
+                        <div class="event-speakers">
+                            <span><i class="fas fa-microphone"></i> Featuring:</span>
+                            <div class="speaker-avatars">
+                                {% for speaker in event.speakers[:3] %}
+                                <img src="{{ speaker.profile_image or url_for('static', filename='default_profile.png') }}" 
+                                     alt="{{ speaker.name }}" title="{{ speaker.name }}">
+                                {% endfor %}
+                                {% if event.speakers|length > 3 %}
+                                <span class="more-speakers">+{{ event.speakers|length - 3 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="event-footer">
+                        <div class="organizer">
+                            <img src="{{ event.organizer.profile_picture or url_for('static', filename='default_profile.png') }}" 
+                                 alt="{{ event.organizer.first_name }}">
+                            <span>By {{ event.organizer.first_name }} {{ event.organizer.last_name }}</span>
+                        </div>
+                        <div class="event-stats">
+                            {% if event.max_attendees %}
+                            <span class="spots-left">
+                                {{ event.get_remaining_spots() }} spots left
+                            </span>
+                            {% endif %}
+                            <div class="price">
+                                {% if event.price == 0 %}
+                                <span>Free</span>
+                                {% else %}
+                                <span>{{ event.currency }} {{ "%.2f"|format(event.price) }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('view_event', event_id=event.id) }}" class="event-link"></a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if pages > 1 %}
+        <div class="pagination">
+            {% if page > 1 %}
+            <a href="{{ url_for('events', page=page-1) }}" class="btn btn-outline-primary">&laquo; Previous</a>
+            {% endif %}
+            
+            {% for p in range(1, pages + 1) %}
+            <a href="{{ url_for('events', page=p) }}" 
+               class="btn {% if p == page %}btn-primary{% else %}btn-outline-primary{% endif %}">{{ p }}</a>
+            {% endfor %}
+            
+            {% if page < pages %}
+            <a href="{{ url_for('events', page=page+1) }}" class="btn btn-outline-primary">Next &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Create Event CTA -->
+    <section class="create-event-cta">
+        <div class="cta-content">
+            <h2>Host Your Own Event</h2>
+            <p>Share your culture, music, or knowledge with the community</p>
+            <a href="{{ url_for('create_event') }}" class="btn btn-primary">Create Event</a>
+        </div>
+        <div class="cta-image">
+            <img src="{{ url_for('static', filename='event-host.jpg') }}" alt="Host an event">
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const eventSearch = document.getElementById('eventSearch');
+    const typeFilter = document.getElementById('typeFilter');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const locationFilter = document.getElementById('locationFilter');
+    const dateFilter = document.getElementById('dateFilter');
+    const eventsContainer = document.getElementById('eventsContainer');
+    const viewToggleButtons = document.querySelectorAll('.view-toggle button');
+
+    function filterEvents() {
+        const searchQuery = eventSearch.value.toLowerCase();
+        const type = typeFilter.value;
+        const category = categoryFilter.value;
+        const location = locationFilter.value;
+        const date = dateFilter.value;
+
+        fetch(`/api/filter-events?search=${searchQuery}&type=${type}&category=${category}&location=${location}&date=${date}`)
+            .then(response => response.json())
+            .then(data => {
+                eventsContainer.innerHTML = data.html;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // View toggle
+    viewToggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            viewToggleButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            const view = this.dataset.view;
+            eventsContainer.className = view === 'grid' ? 'events-grid' : 'events-list';
+        });
+    });
+
+    // Add event listeners
+    eventSearch.addEventListener('input', debounce(filterEvents, 300));
+    typeFilter.addEventListener('change', filterEvents);
+    categoryFilter.addEventListener('change', filterEvents);
+    locationFilter.addEventListener('change', filterEvents);
+    dateFilter.addEventListener('change', filterEvents);
+
+    // Debounce function
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+});
+</script>
+{% endblock %}

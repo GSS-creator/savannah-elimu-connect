@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}GSS-TEC AI Assistant{% endblock %}
+
+{% block content %}
+<div class="ai-chat-container">
+    <!-- Chat Header -->
+    <div class="chat-header">
+        <div class="ai-info">
+            <div class="ai-logo">
+                <img src="{{ url_for('static', filename='gss-ai-logo.svg') }}" alt="GSS-TEC AI">
+            </div>
+            <div class="ai-details">
+                <h1>GSS-TEC AI Assistant</h1>
+                <p class="ai-status">Online</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="chat-messages" id="chatMessages">
+        <!-- Welcome Message -->
+        <div class="message ai-message">
+            <div class="message-content">
+                <p>Welcome to GSS-TEC assistant model, I'm here to help you navigate the app</p>
+            </div>
+            <div class="message-time">Just now</div>
+        </div>
+        
+        {% for message in messages %}
+        <div class="message {% if message.is_ai %}ai-message{% else %}user-message{% endif %}">
+            <div class="message-content">
+                <p>{{ message.content }}</p>
+            </div>
+            <div class="message-time">{{ message.created_at.strftime('%H:%M') }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <button class="quick-action-btn" data-query="How do I create an event?">
+            <i class="fas fa-calendar-plus"></i> Create Event
+        </button>
+        <button class="quick-action-btn" data-query="How do I list a product?">
+            <i class="fas fa-store"></i> List Product
+        </button>
+        <button class="quick-action-btn" data-query="How do I enroll in a course?">
+            <i class="fas fa-graduation-cap"></i> Enroll Course
+        </button>
+        <button class="quick-action-btn" data-query="How do I contact support?">
+            <i class="fas fa-question-circle"></i> Get Help
+        </button>
+    </div>
+
+    <!-- Chat Input -->
+    <div class="chat-input">
+        <form id="chatForm" class="chat-form">
+            <div class="input-group">
+                <input type="text" 
+                       id="messageInput" 
+                       name="message" 
+                       placeholder="Type your message..." 
+                       autocomplete="off"
+                       required>
+                <button type="submit" class="send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+        <div class="input-features">
+            <button class="feature-btn" title="Upload File">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            <button class="feature-btn" title="Voice Input">
+                <i class="fas fa-microphone"></i>
+            </button>
+            <button class="feature-btn" title="Take Screenshot">
+                <i class="fas fa-camera"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Privacy Notice -->
+    <div class="privacy-notice">
+        <p><i class="fas fa-shield-alt"></i> This AI assistant has limited access to personal information. For sensitive inquiries, please contact the owner directly.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatMessages = document.getElementById('chatMessages');
+    const chatForm = document.getElementById('chatForm');
+    const messageInput = document.getElementById('messageInput');
+    const quickActionBtns = document.querySelectorAll('.quick-action-btn');
+
+    // Scroll to bottom of chat
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    scrollToBottom();
+
+    // Add message to chat
+    function addMessage(content, isAI = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isAI ? 'ai-message' : 'user-message'}`;
+        
+        const now = new Date();
+        const time = now.getHours().toString().padStart(2, '0') + ':' + 
+                    now.getMinutes().toString().padStart(2, '0');
+
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <p>${content}</p>
+            </div>
+            <div class="message-time">${time}</div>
+        `;
+
+        chatMessages.appendChild(messageDiv);
+        scrollToBottom();
+    }
+
+    // Handle form submission
+    chatForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const message = messageInput.value.trim();
+        if (!message) return;
+
+        // Add user message
+        addMessage(message, false);
+        messageInput.value = '';
+
+        try {
+            // Add AI response
+            const response = await fetch('/api/ai/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ message: message })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.error) {
+                console.error('AI Chat Error:', data.error);
+                addMessage("I apologize, but I encountered an error. Please try again.", true);
+            } else {
+                addMessage(data.response, true);
+            }
+        } catch (error) {
+            console.error('AI Chat Error:', error);
+            addMessage("I apologize, but I'm having trouble processing your request. Please try again.", true);
+        }
+    });
+
+    // Handle quick action buttons
+    quickActionBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const query = this.dataset.query;
+            messageInput.value = query;
+            chatForm.dispatchEvent(new Event('submit'));
+        });
+    });
+
+    // Handle file upload button
+    document.querySelector('.feature-btn[title="Upload File"]').addEventListener('click', function() {
+        addMessage("File upload feature coming soon!", true);
+    });
+
+    // Handle voice input button
+    document.querySelector('.feature-btn[title="Voice Input"]').addEventListener('click', function() {
+        addMessage("Voice input feature coming soon!", true);
+    });
+
+    // Handle screenshot button
+    document.querySelector('.feature-btn[title="Take Screenshot"]').addEventListener('click', function() {
+        addMessage("Screenshot feature coming soon!", true);
+    });
+});
+</script>
+{% endblock %}

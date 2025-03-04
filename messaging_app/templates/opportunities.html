@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Business Opportunities{% endblock %}
+
+{% block content %}
+<div class="opportunities-container">
+    <div class="opportunities-header">
+        <h1>Business Opportunities</h1>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('create_opportunity') }}" class="btn btn-primary">Post New Opportunity</a>
+        {% endif %}
+    </div>
+
+    <div class="filters-section">
+        <div class="search-bar">
+            <input type="text" id="opportunity-search" placeholder="Search opportunities...">
+        </div>
+        <div class="filters">
+            <select id="type-filter" class="filter-select">
+                <option value="">All Types</option>
+                <option value="investment">Investment</option>
+                <option value="partnership">Partnership</option>
+                <option value="mentorship">Mentorship</option>
+                <option value="job">Job</option>
+            </select>
+            <select id="industry-filter" class="filter-select">
+                <option value="">All Industries</option>
+                <option value="technology">Technology</option>
+                <option value="agriculture">Agriculture</option>
+                <option value="finance">Finance</option>
+                <option value="education">Education</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="manufacturing">Manufacturing</option>
+                <option value="retail">Retail</option>
+            </select>
+            <select id="location-filter" class="filter-select">
+                <option value="">All Locations</option>
+                {% for country in countries %}
+                <option value="{{ country }}">{{ country }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="opportunities-grid">
+        {% for opportunity in opportunities %}
+        <div class="opportunity-card" 
+             data-type="{{ opportunity.opportunity_type }}"
+             data-industry="{{ opportunity.industry }}"
+             data-location="{{ opportunity.location }}">
+            <div class="opportunity-header">
+                <h2>{{ opportunity.title }}</h2>
+                <span class="opportunity-type {{ opportunity.opportunity_type }}">
+                    {{ opportunity.opportunity_type|title }}
+                </span>
+            </div>
+            
+            <div class="opportunity-meta">
+                <span class="industry">
+                    <i class="fas fa-industry"></i> {{ opportunity.industry }}
+                </span>
+                <span class="location">
+                    <i class="fas fa-map-marker-alt"></i> {{ opportunity.location }}
+                </span>
+                {% if opportunity.investment_range %}
+                <span class="investment">
+                    <i class="fas fa-dollar-sign"></i> {{ opportunity.investment_range }}
+                </span>
+                {% endif %}
+            </div>
+
+            <div class="opportunity-description">
+                <p>{{ opportunity.description[:200] }}{% if opportunity.description|length > 200 %}...{% endif %}</p>
+            </div>
+
+            <div class="opportunity-footer">
+                <div class="creator-info">
+                    <img src="{{ opportunity.creator.profile_picture or url_for('static', filename='default_profile.png') }}" 
+                         alt="Creator's profile picture" class="creator-avatar">
+                    <div class="creator-details">
+                        <a href="{{ url_for('business_profile', username=opportunity.creator.username) }}" class="creator-name">
+                            {{ opportunity.creator.first_name }} {{ opportunity.creator.last_name }}
+                        </a>
+                        <span class="creator-title">{{ opportunity.creator.job_title }}</span>
+                    </div>
+                </div>
+
+                <div class="opportunity-actions">
+                    {% if opportunity.status == 'open' and current_user != opportunity.creator %}
+                        <a href="{{ url_for('view_opportunity', opportunity_id=opportunity.id) }}" class="btn btn-secondary">Learn More</a>
+                        <a href="{{ url_for('apply_opportunity', opportunity_id=opportunity.id) }}" class="btn btn-primary">Apply Now</a>
+                    {% elif current_user == opportunity.creator %}
+                        <a href="{{ url_for('manage_opportunity', opportunity_id=opportunity.id) }}" class="btn btn-secondary">Manage</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="opportunity-status">
+                <span class="deadline">
+                    <i class="far fa-clock"></i> 
+                    Deadline: {{ opportunity.deadline.strftime('%Y-%m-%d') }}
+                </span>
+                <span class="applications-count">
+                    <i class="far fa-user"></i>
+                    {{ opportunity.applications.count() }} applications
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('opportunity-search');
+    const typeFilter = document.getElementById('type-filter');
+    const industryFilter = document.getElementById('industry-filter');
+    const locationFilter = document.getElementById('location-filter');
+    const opportunities = document.querySelectorAll('.opportunity-card');
+
+    function filterOpportunities() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedType = typeFilter.value;
+        const selectedIndustry = industryFilter.value;
+        const selectedLocation = locationFilter.value;
+
+        opportunities.forEach(card => {
+            const type = card.dataset.type;
+            const industry = card.dataset.industry;
+            const location = card.dataset.location;
+            const title = card.querySelector('h2').textContent.toLowerCase();
+            const description = card.querySelector('.opportunity-description').textContent.toLowerCase();
+
+            const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+            const matchesType = !selectedType || type === selectedType;
+            const matchesIndustry = !selectedIndustry || industry === selectedIndustry;
+            const matchesLocation = !selectedLocation || location === selectedLocation;
+
+            if (matchesSearch && matchesType && matchesIndustry && matchesLocation) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    searchInput.addEventListener('input', filterOpportunities);
+    typeFilter.addEventListener('change', filterOpportunities);
+    industryFilter.addEventListener('change', filterOpportunities);
+    locationFilter.addEventListener('change', filterOpportunities);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit' if product else 'Create' }} Listing{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>{{ 'Edit' if product else 'Create' }} Listing</h1>
+    
+    <form method="POST" enctype="multipart/form-data" class="product-form">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.title.label }}
+            {{ form.title(class="form-control") }}
+            {% for error in form.title.errors %}
+            <span class="error">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.description.label }}
+            {{ form.description(class="form-control", rows=5) }}
+            {% for error in form.description.errors %}
+            <span class="error">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-row">
+            <div class="form-group half">
+                {{ form.price.label }}
+                <div class="price-input">
+                    <span class="currency">$</span>
+                    {{ form.price(class="form-control") }}
+                </div>
+                {% for error in form.price.errors %}
+                <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="form-group half">
+                {{ form.location.label }}
+                {{ form.location(class="form-control") }}
+                {% for error in form.location.errors %}
+                <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group half">
+                {{ form.category.label }}
+                {{ form.category(class="form-control") }}
+                {% for error in form.category.errors %}
+                <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="form-group half">
+                {{ form.condition.label }}
+                {{ form.condition(class="form-control") }}
+                {% for error in form.condition.errors %}
+                <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form.images.label }}
+            <div class="image-upload-container">
+                <div class="image-preview-area" id="imagePreview">
+                    {% if product and product.images %}
+                        {% for image in product.images.split(',') %}
+                        <div class="image-preview">
+                            <img src="{{ image }}" alt="Product image">
+                            <button type="button" class="remove-image" data-image="{{ image }}">×</button>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="upload-button">
+                    {{ form.images(class="form-control", accept="image/*", multiple=true) }}
+                    <div class="upload-text">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Click to upload or drag images here</span>
+                        <small>Maximum 5 images, each up to 5MB</small>
+                    </div>
+                </div>
+            </div>
+            {% for error in form.images.errors %}
+            <span class="error">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ url_for('marketplace') }}" class="btn btn-secondary">Cancel</a>
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.querySelector('input[type="file"]');
+    const previewArea = document.getElementById('imagePreview');
+    const maxImages = 5;
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+
+    function createImagePreview(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.createElement('div');
+            preview.className = 'image-preview';
+            preview.innerHTML = `
+                <img src="${e.target.result}" alt="Preview">
+                <button type="button" class="remove-image">×</button>
+            `;
+            
+            preview.querySelector('.remove-image').addEventListener('click', function() {
+                preview.remove();
+                updateImageInput();
+            });
+            
+            previewArea.appendChild(preview);
+        }
+        reader.readAsDataURL(file);
+    }
+
+    function updateImageInput() {
+        // Create a new FileList from the remaining previews
+        const dt = new DataTransfer();
+        const currentFiles = imageInput.files;
+        const remainingPreviews = previewArea.querySelectorAll('.image-preview').length;
+        
+        for (let i = 0; i < Math.min(currentFiles.length, remainingPreviews); i++) {
+            dt.items.add(currentFiles[i]);
+        }
+        
+        imageInput.files = dt.files;
+    }
+
+    imageInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        const currentImages = previewArea.querySelectorAll('.image-preview').length;
+        
+        if (files.length + currentImages > maxImages) {
+            alert(`You can only upload a maximum of ${maxImages} images`);
+            return;
+        }
+
+        files.forEach(file => {
+            if (file.size > maxSize) {
+                alert(`${file.name} is too large. Maximum file size is 5MB`);
+                return;
+            }
+            
+            if (!file.type.startsWith('image/')) {
+                alert(`${file.name} is not an image file`);
+                return;
+            }
+            
+            createImagePreview(file);
+        });
+    });
+
+    // Handle drag and drop
+    const uploadArea = document.querySelector('.upload-button');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight(e) {
+        uploadArea.classList.add('highlight');
+    }
+
+    function unhighlight(e) {
+        uploadArea.classList.remove('highlight');
+    }
+
+    uploadArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length + previewArea.querySelectorAll('.image-preview').length > maxImages) {
+            alert(`You can only upload a maximum of ${maxImages} images`);
+            return;
+        }
+        
+        imageInput.files = files;
+        handleFiles(files);
+    }
+
+    function handleFiles(files) {
+        Array.from(files).forEach(createImagePreview);
+    }
+
+    // Handle existing image removal
+    document.querySelectorAll('.remove-image[data-image]').forEach(button => {
+        button.addEventListener('click', function() {
+            const imageUrl = this.dataset.image;
+            // Send AJAX request to remove the image
+            fetch('/api/remove-product-image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    product_id: '{{ product.id if product else "" }}',
+                    image_url: imageUrl
+                })
+            }).then(response => {
+                if (response.ok) {
+                    this.closest('.image-preview').remove();
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

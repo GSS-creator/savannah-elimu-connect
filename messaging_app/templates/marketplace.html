@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+
+{% block title %}Marketplace - Savannah Elimu Connect{% endblock %}
+
+{% block content %}
+<div class="marketplace-container">
+    <div class="marketplace-header">
+        <h1>Marketplace</h1>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('create_listing') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create Listing
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="marketplace-filters">
+        <div class="search-bar">
+            <input type="text" id="product-search" placeholder="Search products...">
+            <button type="button" id="search-btn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        
+        <div class="filters">
+            <select id="category-filter" class="filter-select">
+                <option value="">All Categories</option>
+                <option value="electronics">Electronics</option>
+                <option value="books">Books</option>
+                <option value="fashion">Fashion</option>
+                <option value="home">Home & Living</option>
+                <option value="services">Services</option>
+                <option value="other">Other</option>
+            </select>
+            
+            <select id="condition-filter" class="filter-select">
+                <option value="">All Conditions</option>
+                <option value="new">New</option>
+                <option value="like-new">Like New</option>
+                <option value="good">Good</option>
+                <option value="fair">Fair</option>
+            </select>
+            
+            <select id="price-filter" class="filter-select">
+                <option value="">Any Price</option>
+                <option value="0-50">Under $50</option>
+                <option value="50-100">$50 - $100</option>
+                <option value="100-500">$100 - $500</option>
+                <option value="500+">$500+</option>
+            </select>
+            
+            <select id="location-filter" class="filter-select">
+                <option value="">All Locations</option>
+                {% for location in locations %}
+                <option value="{{ location }}">{{ location }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card" 
+             data-category="{{ product.category }}"
+             data-condition="{{ product.condition }}"
+             data-price="{{ product.price }}"
+             data-location="{{ product.location }}">
+            <div class="product-images">
+                {% if product.images %}
+                <div class="image-slider">
+                    {% for image in product.images.split(',') %}
+                    <img src="{{ image }}" alt="{{ product.title }}">
+                    {% endfor %}
+                    {% if product.images.split(',')|length > 1 %}
+                    <button class="prev-btn"><i class="fas fa-chevron-left"></i></button>
+                    <button class="next-btn"><i class="fas fa-chevron-right"></i></button>
+                    {% endif %}
+                </div>
+                {% else %}
+                <img src="{{ url_for('static', filename='default_product.png') }}" alt="No image available">
+                {% endif %}
+            </div>
+
+            <div class="product-info">
+                <h3 class="product-title">{{ product.title }}</h3>
+                <div class="product-meta">
+                    <span class="price">${{ "%.2f"|format(product.price) }}</span>
+                    <span class="condition">{{ product.condition }}</span>
+                </div>
+                <p class="product-description">{{ product.description[:100] }}{% if product.description|length > 100 %}...{% endif %}</p>
+                
+                <div class="product-footer">
+                    <div class="seller-info">
+                        <img src="{{ product.seller.profile_picture or url_for('static', filename='default_profile.png') }}" 
+                             alt="Seller's profile picture" class="seller-avatar">
+                        <div class="seller-details">
+                            <a href="{{ url_for('business_profile', username=product.seller.username) }}" class="seller-name">
+                                {{ product.seller.first_name }} {{ product.seller.last_name }}
+                            </a>
+                            <div class="seller-rating">
+                                {% set rating = product.seller.get_rating() %}
+                                {% for i in range(5) %}
+                                <i class="fas fa-star{% if i >= rating %}-o{% endif %}"></i>
+                                {% endfor %}
+                                <span>({{ product.seller.reviews_received.count() }})</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="product-actions">
+                        {% if product.status == 'available' and current_user != product.seller %}
+                        <button class="btn btn-primary buy-now-btn" data-product-id="{{ product.id }}">
+                            Buy Now
+                        </button>
+                        <button class="btn btn-secondary message-seller-btn" data-seller-id="{{ product.seller.id }}">
+                            Message
+                        </button>
+                        {% elif product.status == 'sold' %}
+                        <span class="sold-badge">Sold</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Buy Now Modal -->
+<div id="buy-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Complete Purchase</h2>
+        <form id="purchase-form">
+            <input type="hidden" id="product-id" name="product_id">
+            
+            <div class="form-group">
+                <label for="shipping-address">Shipping Address</label>
+                <textarea id="shipping-address" name="shipping_address" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="payment-method">Payment Method</label>
+                <select id="payment-method" name="payment_method" required>
+                    <option value="mobile_money">Mobile Money</option>
+                    <option value="bank_transfer">Bank Transfer</option>
+                    <option value="card">Credit/Debit Card</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Order Summary</label>
+                <div class="order-summary">
+                    <div class="summary-item">
+                        <span>Product Price:</span>
+                        <span id="product-price"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Shipping Fee:</span>
+                        <span id="shipping-fee"></span>
+                    </div>
+                    <div class="summary-item total">
+                        <span>Total:</span>
+                        <span id="total-price"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Confirm Purchase</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Search and filtering functionality
+    const searchInput = document.getElementById('product-search');
+    const categoryFilter = document.getElementById('category-filter');
+    const conditionFilter = document.getElementById('condition-filter');
+    const priceFilter = document.getElementById('price-filter');
+    const locationFilter = document.getElementById('location-filter');
+    const products = document.querySelectorAll('.product-card');
+
+    function filterProducts() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedCategory = categoryFilter.value;
+        const selectedCondition = conditionFilter.value;
+        const selectedPrice = priceFilter.value;
+        const selectedLocation = locationFilter.value;
+
+        products.forEach(card => {
+            const category = card.dataset.category;
+            const condition = card.dataset.condition;
+            const price = parseFloat(card.dataset.price);
+            const location = card.dataset.location;
+            const title = card.querySelector('.product-title').textContent.toLowerCase();
+            const description = card.querySelector('.product-description').textContent.toLowerCase();
+
+            const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+            const matchesCategory = !selectedCategory || category === selectedCategory;
+            const matchesCondition = !selectedCondition || condition === selectedCondition;
+            const matchesLocation = !selectedLocation || location === selectedLocation;
+            
+            let matchesPrice = true;
+            if (selectedPrice) {
+                const [min, max] = selectedPrice.split('-').map(p => p === '+' ? Infinity : parseFloat(p));
+                matchesPrice = price >= min && (max === Infinity || price <= max);
+            }
+
+            if (matchesSearch && matchesCategory && matchesCondition && matchesPrice && matchesLocation) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    // Image slider functionality
+    document.querySelectorAll('.image-slider').forEach(slider => {
+        const images = slider.querySelectorAll('img');
+        const prevBtn = slider.querySelector('.prev-btn');
+        const nextBtn = slider.querySelector('.next-btn');
+        let currentIndex = 0;
+
+        function showImage(index) {
+            images.forEach((img, i) => {
+                img.style.display = i === index ? 'block' : 'none';
+            });
+        }
+
+        if (prevBtn && nextBtn) {
+            prevBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                showImage(currentIndex);
+            });
+
+            nextBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % images.length;
+                showImage(currentIndex);
+            });
+        }
+
+        showImage(0);
+    });
+
+    // Buy Now Modal
+    const modal = document.getElementById('buy-modal');
+    const buyButtons = document.querySelectorAll('.buy-now-btn');
+    const closeBtn = document.querySelector('.close');
+    const purchaseForm = document.getElementById('purchase-form');
+
+    buyButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const productId = this.dataset.productId;
+            const productCard = this.closest('.product-card');
+            const price = parseFloat(productCard.dataset.price);
+            
+            document.getElementById('product-id').value = productId;
+            document.getElementById('product-price').textContent = `$${price.toFixed(2)}`;
+            
+            // Calculate shipping fee based on location
+            const shippingFee = 10.00; // Example fixed shipping fee
+            document.getElementById('shipping-fee').textContent = `$${shippingFee.toFixed(2)}`;
+            
+            const total = price + shippingFee;
+            document.getElementById('total-price').textContent = `$${total.toFixed(2)}`;
+            
+            modal.style.display = 'block';
+        });
+    });
+
+    closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    purchaseForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const response = await fetch('/api/create-order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(Object.fromEntries(formData)),
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            window.location.href = `/order/${result.order_id}`;
+        } else {
+            alert('There was an error processing your order. Please try again.');
+        }
+    });
+
+    // Message seller functionality
+    document.querySelectorAll('.message-seller-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const sellerId = this.dataset.sellerId;
+            window.location.href = `/messages/new?user_id=${sellerId}`;
+        });
+    });
+
+    // Add event listeners for filtering
+    searchInput.addEventListener('input', filterProducts);
+    categoryFilter.addEventListener('change', filterProducts);
+    conditionFilter.addEventListener('change', filterProducts);
+    priceFilter.addEventListener('change', filterProducts);
+    locationFilter.addEventListener('change', filterProducts);
+});
+</script>
+{% endblock %}

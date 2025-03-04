@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="resources-container">
+    <h1>Educational Resources</h1>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Video Tutorials Section -->
+    <section class="resource-section">
+        <div class="section-header">
+            <h2><i class="fas fa-video"></i> Video Tutorials</h2>
+            <p>Learn through curated educational videos about African history and culture</p>
+        </div>
+        <div class="resources-grid video-grid">
+            {% if youtube_videos %}
+                {% for video in youtube_videos %}
+                <div class="resource-card video-card">
+                    <div class="video-thumbnail">
+                        <img src="{{ video.snippet.thumbnails.medium.url }}" alt="{{ video.snippet.title }}">
+                        <a href="https://www.youtube.com/watch?v={{ video.id.videoId }}" target="_blank" class="play-button">
+                            <i class="fas fa-play"></i>
+                        </a>
+                    </div>
+                    <div class="resource-content">
+                        <h3>{{ video.snippet.title }}</h3>
+                        <p>{{ video.snippet.description[:100] }}...</p>
+                        <div class="resource-meta">
+                            <span><i class="fas fa-user"></i> {{ video.snippet.channelTitle }}</span>
+                            <span><i class="fas fa-calendar"></i> {{ video.snippet.publishedAt[:10] }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-content">
+                    <p>Video content is temporarily unavailable. Please check back later.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Online Courses Section -->
+    <section class="resource-section">
+        <div class="section-header">
+            <h2><i class="fas fa-graduation-cap"></i> Online Courses</h2>
+            <p>Explore professional courses about African studies and culture</p>
+        </div>
+        <div class="resources-grid course-grid">
+            {% if coursera_courses %}
+                {% for course in coursera_courses %}
+                <div class="resource-card course-card">
+                    <div class="course-image">
+                        <img src="{{ course.photoUrl }}" alt="{{ course.name }}">
+                    </div>
+                    <div class="resource-content">
+                        <h3>{{ course.name }}</h3>
+                        <p>{{ course.description[:150] }}...</p>
+                        <a href="https://www.coursera.org/learn/{{ course.slug }}" target="_blank" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-content">
+                    <p>Course content is temporarily unavailable. Please check back later.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Books Section -->
+    <section class="resource-section">
+        <div class="section-header">
+            <h2><i class="fas fa-book"></i> Books & Literature</h2>
+            <p>Discover books about African history, culture, and heritage</p>
+        </div>
+        <div class="resources-grid book-grid">
+            {% if books %}
+                {% for book in books %}
+                <div class="resource-card book-card">
+                    <div class="book-cover">
+                        <img src="https://covers.openlibrary.org/b/id/{{ book.cover_id }}-M.jpg" alt="{{ book.title }}"
+                             onerror="this.src='{{ url_for('static', filename='default_book.jpg') }}'">
+                    </div>
+                    <div class="resource-content">
+                        <h3>{{ book.title }}</h3>
+                        <p class="author">by {{ book.authors[0].name if book.authors else 'Unknown Author' }}</p>
+                        <a href="https://openlibrary.org{{ book.key }}" target="_blank" class="btn btn-outline-primary">View Details</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-content">
+                    <p>Book content is temporarily unavailable. Please check back later.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Local Resources Section -->
+    <section class="resource-section">
+        <div class="section-header">
+            <h2><i class="fas fa-folder-open"></i> Community Resources</h2>
+            <p>Access resources shared by our community members</p>
+        </div>
+        <div class="resources-grid local-grid">
+            {% if local_resources %}
+                {% for resource in local_resources %}
+                <div class="resource-card local-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-{{ resource.resource_type|default('file') }}"></i>
+                    </div>
+                    <div class="resource-content">
+                        <h3>{{ resource.title }}</h3>
+                        <p>{{ resource.description[:100] }}...</p>
+                        <div class="resource-meta">
+                            <span><i class="fas fa-user"></i> {{ resource.resource_owner.username }}</span>
+                            <span><i class="fas fa-tag"></i> {{ resource.category }}</span>
+                        </div>
+                        <a href="{{ resource.file_url }}" class="btn btn-outline-primary" target="_blank">Access Resource</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-content">
+                    <p>No community resources available yet. Be the first to share!</p>
+                    <a href="#" class="btn btn-primary">Share a Resource</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
+
+<style>
+.resources-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.resources-container h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #2c3e50;
+}
+
+.resource-section {
+    margin-bottom: 3rem;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.section-header h2 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.section-header p {
+    color: #7f8c8d;
+}
+
+.resources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.resource-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.resource-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Video Cards */
+.video-thumbnail {
+    position: relative;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+}
+
+.video-thumbnail img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e74c3c;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.play-button:hover {
+    background: #e74c3c;
+    color: white;
+}
+
+/* Course Cards */
+.course-image {
+    height: 200px;
+    overflow: hidden;
+}
+
+.course-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Book Cards */
+.book-cover {
+    height: 300px;
+    overflow: hidden;
+}
+
+.book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.author {
+    color: #7f8c8d;
+    font-style: italic;
+    margin: 0.5rem 0;
+}
+
+/* Local Resource Cards */
+.resource-icon {
+    font-size: 2.5rem;
+    color: #3498db;
+    margin: 1rem 0;
+}
+
+.resource-content {
+    padding: 1.5rem;
+}
+
+.resource-content h3 {
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+    font-size: 1.2rem;
+}
+
+.resource-content p {
+    color: #7f8c8d;
+    margin-bottom: 1rem;
+}
+
+.resource-meta {
+    display: flex;
+    justify-content: space-between;
+    color: #95a5a6;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.resource-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+.btn-outline-primary {
+    border: 2px solid #3498db;
+    color: #3498db;
+}
+
+.btn-outline-primary:hover {
+    background: #3498db;
+    color: white;
+}
+
+.no-content {
+    text-align: center;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.no-content p {
+    color: #7f8c8d;
+    margin-bottom: 1rem;
+}
+
+.alert {
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.alert-warning {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+@media (max-width: 768px) {
+    .resources-container {
+        padding: 1rem;
+    }
+
+    .resources-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .resource-card {
+        margin-bottom: 1rem;
+    }
+}
+</style>
+{% endblock %}

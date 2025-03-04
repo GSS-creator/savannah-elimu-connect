@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Order Details{% endblock %}
+
+{% block content %}
+<div class="order-container">
+    <div class="order-header">
+        <h1>Order #{{ order.id }}</h1>
+        <div class="order-status {{ order.status }}">
+            {{ order.status|title }}
+        </div>
+    </div>
+
+    <div class="order-content">
+        <div class="order-details">
+            <div class="product-info">
+                <h2>Product Details</h2>
+                <div class="product-card">
+                    {% if order.product.images %}
+                    <img src="{{ order.product.images.split(',')[0] }}" alt="{{ order.product.title }}">
+                    {% endif %}
+                    <div class="product-details">
+                        <h3>{{ order.product.title }}</h3>
+                        <p class="price">${{ "%.2f"|format(order.product.price) }}</p>
+                        <div class="meta">
+                            <span class="category">{{ order.product.category|title }}</span>
+                            <span class="condition">{{ order.product.condition|title }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-info">
+                <h2>Order Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Order Date</label>
+                        <span>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Payment Method</label>
+                        <span>{{ order.payment_method|replace('_', ' ')|title }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Transaction ID</label>
+                        <span>{{ order.transaction_id or 'Pending' }}</span>
+                    </div>
+                    {% if order.tracking_number %}
+                    <div class="info-item">
+                        <label>Tracking Number</label>
+                        <span>{{ order.tracking_number }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="shipping-info">
+                <h2>Shipping Details</h2>
+                <p>{{ order.shipping_address|nl2br }}</p>
+            </div>
+
+            <div class="price-breakdown">
+                <h2>Price Breakdown</h2>
+                <div class="price-list">
+                    <div class="price-item">
+                        <span>Product Price</span>
+                        <span>${{ "%.2f"|format(order.amount) }}</span>
+                    </div>
+                    <div class="price-item">
+                        <span>Shipping Fee</span>
+                        <span>$10.00</span>
+                    </div>
+                    <div class="price-item total">
+                        <span>Total</span>
+                        <span>${{ "%.2f"|format(order.amount + 10) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-sidebar">
+            {% if current_user == order.buyer %}
+            <div class="seller-info">
+                <h2>Seller Information</h2>
+                <div class="user-card">
+                    <img src="{{ order.seller.profile_picture or url_for('static', filename='default_profile.png') }}" 
+                         alt="Seller's profile picture">
+                    <div class="user-details">
+                        <h3>{{ order.seller.first_name }} {{ order.seller.last_name }}</h3>
+                        <div class="rating">
+                            {% set rating = order.seller.get_rating() %}
+                            {% for i in range(5) %}
+                            <i class="fas fa-star{% if i >= rating %}-o{% endif %}"></i>
+                            {% endfor %}
+                            <span>({{ order.seller.reviews_received.count() }})</span>
+                        </div>
+                        <a href="{{ url_for('business_profile', username=order.seller.username) }}" class="btn btn-secondary">
+                            View Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="buyer-info">
+                <h2>Buyer Information</h2>
+                <div class="user-card">
+                    <img src="{{ order.buyer.profile_picture or url_for('static', filename='default_profile.png') }}" 
+                         alt="Buyer's profile picture">
+                    <div class="user-details">
+                        <h3>{{ order.buyer.first_name }} {{ order.buyer.last_name }}</h3>
+                        <div class="rating">
+                            {% set rating = order.buyer.get_rating() %}
+                            {% for i in range(5) %}
+                            <i class="fas fa-star{% if i >= rating %}-o{% endif %}"></i>
+                            {% endfor %}
+                            <span>({{ order.buyer.reviews_received.count() }})</span>
+                        </div>
+                        <a href="{{ url_for('business_profile', username=order.buyer.username) }}" class="btn btn-secondary">
+                            View Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="order-actions">
+                {% if current_user == order.buyer and order.status == 'completed' and not order.reviews.filter_by(reviewer=current_user).first() %}
+                <a href="{{ url_for('create_review', order_id=order.id) }}" class="btn btn-primary">
+                    Write Review
+                </a>
+                {% endif %}
+                
+                <button class="btn btn-secondary message-user" data-user-id="{{ order.seller.id if current_user == order.buyer else order.buyer.id }}">
+                    Send Message
+                </button>
+            </div>
+
+            {% if order.reviews %}
+            <div class="order-reviews">
+                <h2>Reviews</h2>
+                {% for review in order.reviews %}
+                <div class="review-card">
+                    <div class="review-header">
+                        <img src="{{ review.reviewer.profile_picture or url_for('static', filename='default_profile.png') }}" 
+                             alt="Reviewer's profile picture">
+                        <div class="reviewer-info">
+                            <span class="name">{{ review.reviewer.first_name }} {{ review.reviewer.last_name }}</span>
+                            <div class="rating">
+                                {% for i in range(5) %}
+                                <i class="fas fa-star{% if i >= review.rating %}-o{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <span class="review-date">{{ review.created_at.strftime('%Y-%m-%d') }}</span>
+                    </div>
+                    <p class="review-comment">{{ review.comment }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const messageButtons = document.querySelectorAll('.message-user');
+    
+    messageButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const userId = this.dataset.userId;
+            window.location.href = `/messages/new?user_id=${userId}`;
+        });
+    });
+});
+</script>
+{% endblock %}

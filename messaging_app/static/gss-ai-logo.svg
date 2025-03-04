@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400">
+  <!-- Outer Shape -->
+  <path d="M250 50 L50 150 L50 300 L250 400 L450 300 L450 150 Z" fill="#1565C0"/>
+  
+  <!-- Inner Details -->
+  <path d="M250 100 L100 175 L100 275 L250 350 L400 275 L400 175 Z" fill="#DC3545"/>
+  
+  <!-- SS Text -->
+  <path d="M200 200 Q220 190 240 200 L280 220 Q300 230 320 220" fill="none" stroke="#FFFFFF" stroke-width="15"/>
+  <path d="M180 240 Q200 230 220 240 L260 260 Q280 270 300 260" fill="none" stroke="#FFFFFF" stroke-width="15"/>
+</svg>

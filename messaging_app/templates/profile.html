@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }}'s Profile{% endblock %}
+
+{% block content %}
+<div class="page-background"></div>
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="profile-cover">
+                <div class="profile-avatar">
+                    {% if user.avatar %}
+                    <img src="{{ url_for('static', filename=user.avatar) }}" alt="{{ user.username }}'s avatar">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='default-avatar.png') }}" alt="{{ user.username }}'s avatar">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="profile-info">
+                <h1>{{ user.username }}</h1>
+                {% if user.created_at %}
+                <p class="member-since">Member since {{ user.created_at.strftime('%B %Y') }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <div class="section-header">
+                <i class="fas fa-info-circle"></i>
+                <h2>About</h2>
+            </div>
+            <div class="section-content">
+                <p>{{ user.bio or 'No bio added yet.' }}</p>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <div class="section-header">
+                <i class="fas fa-language"></i>
+                <h2>Language Preferences</h2>
+            </div>
+            <div class="section-content">
+                <p><strong>Preferred Language:</strong> 
+                {% if user.preferred_language %}
+                    {{ supported_languages.get(user.preferred_language, user.preferred_language) }}
+                {% else %}
+                    Not set
+                {% endif %}
+                </p>
+                <p><strong>Auto-translate:</strong> {{ 'Enabled' if user.auto_translate else 'Disabled' }}</p>
+            </div>
+        </div>
+
+        <div class="profile-section">
+            <div class="section-header">
+                <i class="fas fa-users"></i>
+                <h2>Groups</h2>
+            </div>
+            <div class="section-content groups-grid">
+                {% for membership in user.group_memberships %}
+                <div class="group-card">
+                    <div class="group-icon">
+                        <img src="{{ url_for('static', filename=membership.group.icon or 'default-group.png') }}" alt="{{ membership.group.name }}">
+                    </div>
+                    <div class="group-info">
+                        <h3>{{ membership.group.name }}</h3>
+                        <span class="member-role">{{ 'Admin' if membership.is_admin else 'Member' }}</span>
+                    </div>
+                </div>
+                {% else %}
+                <p>Not a member of any groups yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if current_user.id == user.id %}
+        <div class="profile-actions">
+            <a href="{{ url_for('settings') }}" class="edit-button">
+                <i class="fas fa-edit"></i> Edit Profile
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.page-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #134e5e, #71b280, #2ecc71);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    z-index: -1;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.profile-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.profile-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.profile-header {
+    position: relative;
+    text-align: center;
+    padding-bottom: 2rem;
+}
+
+.profile-cover {
+    height: 200px;
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    position: relative;
+}
+
+.profile-avatar {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid white;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-info {
+    margin-top: 70px;
+}
+
+.profile-info h1 {
+    color: #2c3e50;
+    font-size: 2rem;
+    margin: 0;
+}
+
+.member-since {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.profile-section {
+    padding: 2rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.section-header i {
+    font-size: 1.5rem;
+    color: #2ecc71;
+}
+
+.section-header h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.5rem;
+}
+
+.section-content {
+    color: #34495e;
+    line-height: 1.6;
+}
+
+.section-content p {
+    margin: 0.5rem 0;
+}
+
+.groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.group-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.group-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.group-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.group-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.group-info {
+    flex: 1;
+}
+
+.group-info h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1rem;
+}
+
+.member-role {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+}
+
+.profile-actions {
+    padding: 2rem;
+    text-align: center;
+}
+
+.edit-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 2rem;
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.edit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+@media (max-width: 768px) {
+    .profile-container {
+        margin: 1rem;
+    }
+    
+    .profile-cover {
+        height: 150px;
+    }
+    
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        bottom: -50px;
+    }
+    
+    .profile-info {
+        margin-top: 60px;
+    }
+    
+    .profile-section {
+        padding: 1.5rem;
+    }
+    
+    .groups-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

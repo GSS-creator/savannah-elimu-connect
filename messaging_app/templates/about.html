@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}About Savannah Elimu Connect{% endblock %}
+
+{% block content %}
+<div class="about-container">
+    <!-- Hero Section -->
+    <div class="about-hero">
+        <h1>About Savannah Elimu Connect</h1>
+        <p>Connecting Africa through Education, Culture, and Community</p>
+    </div>
+
+    <!-- Company Overview -->
+    <section class="company-overview">
+        <div class="company-info">
+            <div class="company-logo">
+                <img src="{{ url_for('static', filename='gss-logo.png') }}" alt="GSS Logo">
+            </div>
+            <div class="company-details">
+                <h2>Gaston Software Solutions Tec (GSS)</h2>
+                <p>Empowering African communities through innovative technology solutions</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Owner Profile -->
+    <section class="owner-profile">
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-image">
+                    <img src="{{ url_for('static', filename='owner-profile.jpg') }}" alt="Muhangi Gaston">
+                </div>
+                <div class="profile-info">
+                    <h2>Muhangi Gaston</h2>
+                    <p class="title">Founder & CEO</p>
+                    <p class="nationality">
+                        <img src="{{ url_for('static', filename='uganda-flag.png') }}" alt="Uganda Flag">
+                        Ugandan
+                    </p>
+                    <div class="owner-interests">
+                        <span class="interest-tag">
+                            <i class="fas fa-futbol"></i> Football Enthusiast
+                        </span>
+                        <span class="interest-tag">
+                            <i class="fas fa-code"></i> Software Developer
+                        </span>
+                        <span class="interest-tag">
+                            <i class="fas fa-graduation-cap"></i> Tech Innovator
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-content">
+                <div class="contact-info">
+                    <h3>Contact Information</h3>
+                    <ul>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:gastonsoftwaresolutions234@gmail.com">gastonsoftwaresolutions234@gmail.com</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-building"></i>
+                            Gaston Software Solutions Tec (GSS)
+                        </li>
+                        <li>
+                            <i class="fab fa-whatsapp"></i>
+                            <a href="https://wa.me/256755274944" target="_blank">+256 755 274944</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="vision-statement">
+                    <h3>Vision Statement</h3>
+                    <p>"To create innovative technology solutions that empower African communities and facilitate cultural exchange, education, and economic growth across the continent."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platform Features -->
+    <section class="platform-features">
+        <h2>What We Offer</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-graduation-cap"></i>
+                <h3>Education</h3>
+                <p>Access to courses on African history, culture, and languages</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-store"></i>
+                <h3>Marketplace</h3>
+                <p>Buy and sell authentic African products and services</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>Events</h3>
+                <p>Discover and organize cultural events and gatherings</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-users"></i>
+                <h3>Community</h3>
+                <p>Connect with people who share your interests</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Values -->
+    <section class="mission-values">
+        <div class="mission">
+            <h2>Our Mission</h2>
+            <p>To create a vibrant digital platform that preserves and promotes African heritage while fostering education, commerce, and cultural exchange.</p>
+        </div>
+        <div class="values">
+            <h2>Our Values</h2>
+            <ul>
+                <li>
+                    <h3>Cultural Preservation</h3>
+                    <p>Protecting and promoting African heritage for future generations</p>
+                </li>
+                <li>
+                    <h3>Innovation</h3>
+                    <p>Leveraging technology to create meaningful solutions</p>
+                </li>
+                <li>
+                    <h3>Community</h3>
+                    <p>Building strong connections and fostering collaboration</p>
+                </li>
+                <li>
+                    <h3>Education</h3>
+                    <p>Empowering through knowledge and skill development</p>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Contact CTA -->
+    <section class="contact-cta">
+        <h2>Get in Touch</h2>
+        <p>Have questions or want to collaborate? We'd love to hear from you!</p>
+        <a href="mailto:gastonsoftwaresolutions234@gmail.com" class="btn btn-primary">Contact Us</a>
+    </section>
+</div>
+{% endblock %}

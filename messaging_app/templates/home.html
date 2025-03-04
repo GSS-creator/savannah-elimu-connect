@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="welcome-container">
+    <div class="welcome-content">
+        <div class="welcome-header">
+            <h1 class="welcome-title" id="welcomeMessage">Savannah Elimu Connect: Your Community, Your Connections, Your Future</h1>
+            <button class="sound-button" onclick="toggleSound()" id="soundButton">
+                <i class="fas fa-volume-up"></i>
+            </button>
+        </div>
+        
+        <div class="welcome-features">
+            <div class="feature-card">
+                <i class="fas fa-users"></i>
+                <h2>Community</h2>
+                <p>Connect with people across Africa, share experiences, and build lasting relationships.</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fas fa-handshake"></i>
+                <h2>Connections</h2>
+                <p>Network with professionals, educators, and peers to create meaningful opportunities.</p>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fas fa-rocket"></i>
+                <h2>Future</h2>
+                <p>Shape tomorrow's Africa through education, collaboration, and innovation.</p>
+            </div>
+        </div>
+        
+        <div class="welcome-actions">
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('chat') }}" class="btn btn-primary">Start Chatting</a>
+            {% else %}
+            <a href="{{ url_for('register') }}" class="btn btn-primary">Join Now</a>
+            <a href="{{ url_for('login') }}" class="btn btn-secondary">Sign In</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+let speechSynthesis = window.speechSynthesis;
+let isPlaying = false;
+let welcomeUtterance = new SpeechSynthesisUtterance("Savannah Elimu Connect: Your Community, Your Connections, Your Future");
+
+// Configure voice settings
+function setupVoice() {
+    let voices = speechSynthesis.getVoices();
+    let englishVoice = voices.find(voice => voice.lang.startsWith('en'));
+    if (englishVoice) {
+        welcomeUtterance.voice = englishVoice;
+    }
+    welcomeUtterance.rate = 0.9;
+    welcomeUtterance.pitch = 1;
+}
+
+function playWelcomeMessage() {
+    if (!isPlaying) {
+        speechSynthesis.speak(welcomeUtterance);
+        isPlaying = true;
+        document.getElementById('soundButton').innerHTML = '<i class="fas fa-volume-mute"></i>';
+    }
+}
+
+function toggleSound() {
+    if (isPlaying) {
+        speechSynthesis.cancel();
+        isPlaying = false;
+        document.getElementById('soundButton').innerHTML = '<i class="fas fa-volume-up"></i>';
+    } else {
+        playWelcomeMessage();
+    }
+}
+
+// Handle voice loading and start speech
+if (speechSynthesis.getVoices().length > 0) {
+    setupVoice();
+} else {
+    speechSynthesis.onvoiceschanged = setupVoice;
+}
+
+// Typing animation
+let i = 0;
+let speed = 50;
+let welcomeText = document.getElementById('welcomeMessage').textContent;
+
+function typeWriter() {
+    if (i < welcomeText.length) {
+        document.getElementById('welcomeMessage').textContent = welcomeText.substring(0, i + 1);
+        i++;
+        setTimeout(typeWriter, speed);
+    }
+}
+
+typeWriter();
+
+// Ensure voice plays even if page was loaded from cache
+setTimeout(() => {
+    if (!isPlaying) {
+        playWelcomeMessage();
+    }
+}, 1000);
+</script>
+
+<style>
+.welcome-container {
+    min-height: calc(100vh - 60px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 40px 20px;
+}
+
+.welcome-content {
+    max-width: 1200px;
+    width: 100%;
+    text-align: center;
+}
+
+.welcome-header {
+    margin-bottom: 60px;
+    position: relative;
+    display: inline-block;
+}
+
+.welcome-title {
+    font-size: 3em;
+    color: #008080;
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sound-button {
+    position: absolute;
+    right: -50px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #008080;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.sound-button:hover {
+    color: #006666;
+}
+
+.welcome-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+.feature-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-card i {
+    font-size: 2.5em;
+    color: #008080;
+    margin-bottom: 20px;
+}
+
+.feature-card h2 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+.feature-card p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.welcome-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 12px 30px;
+    font-size: 1.1em;
+    border-radius: 30px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #008080;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #006666;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: white;
+    color: #008080;
+    border: 2px solid #008080;
+}
+
+.btn-secondary:hover {
+    background: #008080;
+    color: white;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .welcome-title {
+        font-size: 2em;
+    }
+    
+    .sound-button {
+        position: static;
+        margin-top: 20px;
+        transform: none;
+    }
+    
+    .welcome-features {
+        grid-template-columns: 1fr;
+    }
+    
+    .welcome-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+</style>
+{% endblock %}
