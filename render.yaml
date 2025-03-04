@@ -1,1 +1,39 @@
- 
+services:
+  - type: web
+    name: savannah-elimu-connect
+    runtime: python
+    plan: free
+    buildCommand: |
+      pip install -r requirements.txt
+      cp -r messaging_app/* .
+    startCommand: gunicorn wsgi:app
+    rootDir: messaging_app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.7
+      - key: FLASK_APP
+        value: app.py
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: savannah_elimu_db
+          property: connectionString
+      - key: NEWS_API_KEY
+        sync: false
+      - key: GOOGLE_SEARCH_API_KEY
+        value: AIzaSyD1UD51HPnOPVYkav73LGtsPGWGihnd8tw
+      - key: GOOGLE_SEARCH_ENGINE_ID
+        value: 43d2511b1027a4273
+      - key: YOUTUBE_API_KEY
+        value: AIzaSyA3fpz6oiRFacevbx5hNIjD5pZhm3cc2PU
+    healthCheckPath: /
+    autoDeploy: true
+
+databases:
+  - name: savannah_elimu_db
+    databaseName: savannah_elimu
+    user: savannah_elimu_user
+    plan: free 
