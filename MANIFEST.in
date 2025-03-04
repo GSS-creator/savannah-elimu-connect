@@ -1,7 +1,17 @@
-include messaging_app/templates/*
-include messaging_app/static/*
+include messaging_app/templates/*.html
+include messaging_app/templates/*/*.html
+include messaging_app/static/css/*.css
+include messaging_app/static/js/*.js
+include messaging_app/static/images/*
+include messaging_app/static/uploads/*
 include messaging_app/*.py
 include requirements.txt
 include README.md
+include LICENSE
 recursive-include messaging_app/static *
-recursive-include messaging_app/templates * 
+recursive-include messaging_app/templates *
+recursive-include messaging_app/migrations *
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude *.pyo
+global-exclude .git 
