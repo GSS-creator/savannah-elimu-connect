@@ -1,0 +1,7 @@
+include messaging_app/templates/*
+include messaging_app/static/*
+include messaging_app/*.py
+include requirements.txt
+include README.md
+recursive-include messaging_app/static *
+recursive-include messaging_app/templates * 

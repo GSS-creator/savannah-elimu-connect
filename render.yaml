@@ -3,11 +3,11 @@ services:
     name: savannah-elimu-connect
     runtime: python
     plan: free
-    buildCommand: cd messaging_app && pip install -r requirements.txt
-    startCommand: cd messaging_app && gunicorn wsgi:app
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.7
+        value: 3.8.0
       - key: FLASK_APP
         value: app.py
       - key: FLASK_ENV
